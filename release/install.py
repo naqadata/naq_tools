@@ -11,9 +11,12 @@ parser = argparse.ArgumentParser(description="Install given target and runfiles"
 parser.add_argument("target", help="The target to install")
 args = parser.parse_args()
 
-r = runfiles.Create()
+target_path = Path(args.target).resolve()
 print(args.target)
-target_exec_path = Path(r.Rlocation(f"_main/{args.target}"))
+print(target_path)
+
+r = runfiles.Create()
+target_exec_path = Path(r.Rlocation(target_path.as_posix()))
 target_runfiles_path = Path(f"{target_exec_path}.runfiles")
 
 assert target_exec_path.exists(), f"Target executable not found: {target_exec_path}"
@@ -35,4 +38,4 @@ if install_exec_path.exists():
 subprocess.run(["sudo", "cp", str(target_exec_path), str(install_exec_path)], check=True)
 subprocess.run(["sudo", "cp", "-r", str(target_runfiles_path), str(install_runfiles_path)], check=True)
 
-print(f"Installed {args.target} to {install_exec_path}")
+print(f"Installed {target_path.name} to {install_exec_path}")

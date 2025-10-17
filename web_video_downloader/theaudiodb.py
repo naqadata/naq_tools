@@ -4,7 +4,7 @@ import urllib.parse
 import json
 from enum import Enum
 
-from naqacommon import custom_logging as logging
+from naq_utils import custom_logging as logging
 from web_video_downloader.utils import RequestCache, SettingsFile, GlobalSettings
 from web_video_downloader.manual_info import ManualInfo
 from web_video_downloader.exceptions import ArtistNotFound, TrackNotFound

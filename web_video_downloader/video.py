@@ -2,7 +2,7 @@ from typing import Generator
 from pathlib import Path
 import re
 
-from naqacommon import custom_logging as logging
+from naq_utils import custom_logging as logging
 from web_video_downloader.library_item import LibraryItem
 from web_video_downloader.artist import Artist
 from web_video_downloader.theaudiodb import TheAudioDBAPI

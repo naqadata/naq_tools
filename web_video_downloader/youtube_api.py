@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from googleapiclient.discovery import build
 from typing import Generator, Dict, Optional, List, Tuple
 from pathlib import Path
-from naqacommon import custom_logging as logging
+from naq_utils import custom_logging as logging
 from web_video_downloader.video import Video
 from web_video_downloader.utils import SettingsFile, RequestCache, GlobalSettings, fetch_art
 from web_video_downloader.exceptions import SkipVideo, TrackNotFound, ArtistNotFound

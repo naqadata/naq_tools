@@ -14,3 +14,9 @@ py_library(
     ],
     visibility = ["//visibility:public"],
 )
+
+py_library(
+    name = "naq_tool",
+    srcs = ["naq_tool.py"],
+    visibility = ["//visibility:public"],
+)

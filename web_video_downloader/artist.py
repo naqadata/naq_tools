@@ -1,5 +1,5 @@
 from typing import Dict, Generator
-from naqacommon import custom_logging as logging
+from naq_utils import custom_logging as logging
 from web_video_downloader.theaudiodb import TheAudioDBAPI
 from web_video_downloader.utils import GlobalSettings
 from web_video_downloader.library_item import LibraryItem

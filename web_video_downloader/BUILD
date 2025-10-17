@@ -20,7 +20,7 @@ py_library(
     name = "manual_info",
     srcs = ["manual_info.py"],
     deps = [
-        "//naqacommon:custom_logging",
+        "//naq_utils:custom_logging",
         ":utils",
         ":exceptions",
     ],
@@ -50,7 +50,7 @@ py_library(
     srcs = ["imvdb.py"],
     deps = [
         requirement("urllib3"),
-        "//naqacommon:custom_logging",
+        "//naq_utils:custom_logging",
         ":utils",
     ],
 )
@@ -64,7 +64,7 @@ py_library(
     name = "artist",
     srcs = ["artist.py"],
     deps = [
-        "//naqacommon:custom_logging",
+        "//naq_utils:custom_logging",
         ":theaudiodb",
         ":utils",
         ":library_item",
@@ -75,7 +75,7 @@ py_library(
     name = "video",
     srcs = ["video.py"],
     deps = [
-        "//naqacommon:custom_logging",
+        "//naq_utils:custom_logging",
         ":artist",
         ":theaudiodb",
         ":exceptions",
@@ -89,7 +89,7 @@ py_library(
     srcs = ["youtube_api.py"],
     deps = [
         requirement("google-api-python-client"),
-        "//naqacommon:custom_logging",
+        "//naq_utils:custom_logging",
         ":video",
         ":utils",
         ":exceptions",
@@ -104,8 +104,8 @@ py_library(
     srcs = ["plex.py"],
     deps = [
         requirement("plexapi"),
-        "//naqacommon:console",
-        "//naqacommon:custom_logging",
+        "//naq_utils:console",
+        "//naq_utils:custom_logging",
         ":exceptions",
         ":media_server",
         ":theaudiodb",
@@ -119,15 +119,16 @@ py_binary(
     main = "__main__.py",
     deps = [
         requirement("emoji"),
-        "//naqacommon:custom_logging",
-        "//naqacommon:console",
+        "//naq_utils:naq_tool",
+        "//naq_utils:custom_logging",
+        "//naq_utils:console",
         ":youtube_api",
         ":plex",
         ":video",
     ],
     visibility = [
         "//release:__pkg__",
-        "//naq_tools:__pkg__",
+        "//:__pkg__",
     ],
 )
 

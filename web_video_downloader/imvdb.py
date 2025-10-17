@@ -5,7 +5,7 @@ import urllib3
 import urllib.parse
 import json
 
-from naqacommon import custom_logging as logging
+from naq_utils import custom_logging as logging
 from web_video_downloader.utils import RequestCache
 
 IMVDB_API_KEY = "oPA5IK14HVj9srjiAa6O6eYicQdnWXHBFcnr8kVG"

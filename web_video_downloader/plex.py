@@ -8,8 +8,8 @@ from plexapi.playlist import Playlist
 import plexapi.exceptions
 from typing import Optional, List, Tuple
 
-from naqacommon.console import print_status, print_success, print_warning, print_temp
-from naqacommon import custom_logging as logging
+from naq_utils.console import print_status, print_success, print_warning, print_temp
+from naq_utils import custom_logging as logging
 from web_video_downloader.media_server import MediaServer
 from web_video_downloader.theaudiodb import TheAudioDBAPI
 from web_video_downloader.utils import GlobalSettings
