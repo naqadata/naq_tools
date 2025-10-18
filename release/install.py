@@ -36,6 +36,6 @@ if install_exec_path.exists():
         subprocess.run(["sudo", "rm", "-rf", str(install_runfiles_path)], check=True)
 
 subprocess.run(["sudo", "cp", str(target_exec_path), str(install_exec_path)], check=True)
-subprocess.run(["sudo", "cp", "-r", str(target_runfiles_path), str(install_runfiles_path)], check=True)
+subprocess.run(["sudo", "cp", "-rL", str(target_runfiles_path), str(install_runfiles_path)], check=True)
 
 print(f"Installed {target_path.name} to {install_exec_path}")

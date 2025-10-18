@@ -17,6 +17,7 @@ py_binary(
     deps = [
         "//web_video_downloader:web_video_downloader",
         "//video_utils:rename_with_subtitles",
+        "//gen_subs:gen_subs",
     ],
     visibility = ["//release:__pkg__"],
 )

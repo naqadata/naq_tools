@@ -7,3 +7,9 @@ emoji
 setuptools
 pyinstaller
 bazel-runfiles
+
+# For gen-subs
+openai-whisper==20240930
+stable-ts
+srt
+moviepy
