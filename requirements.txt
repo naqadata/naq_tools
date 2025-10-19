@@ -1,7 +1,6 @@
 google-api-python-client
 colorama
 urllib3
-plexapi
 shared_memory_dict
 emoji
 setuptools

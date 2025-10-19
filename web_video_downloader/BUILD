@@ -99,20 +99,6 @@ py_library(
     ]
 )
 
-py_library(
-    name = "plex",
-    srcs = ["plex.py"],
-    deps = [
-        requirement("plexapi"),
-        "//naq_utils:console",
-        "//naq_utils:custom_logging",
-        ":exceptions",
-        ":media_server",
-        ":theaudiodb",
-        ":utils",
-    ],
-)
-
 py_binary(
     name = "web_video_downloader",
     srcs =["__main__.py"],
@@ -123,7 +109,6 @@ py_binary(
         "//naq_utils:custom_logging",
         "//naq_utils:console",
         ":youtube_api",
-        ":plex",
         ":video",
     ],
     visibility = [

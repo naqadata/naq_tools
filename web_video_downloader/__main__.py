@@ -5,7 +5,6 @@ from naq_utils import console
 from naq_utils import custom_logging as logging
 from naq_utils.naq_tool import NaqTool
 from web_video_downloader.youtube_api import YouTubeAPI, SkipVideo, DEFAULT_DOWNLOAD_MIN_VIEW_COUNT
-from web_video_downloader.plex import Plex
 from web_video_downloader.utils import GlobalSettings
 from web_video_downloader.video import Video
 from pathlib import Path
@@ -55,15 +54,6 @@ class DownloaderTool(NaqTool):
         # YOUTUBE SEARCH
         youtube_search_parser = subparsers.add_parser("search", help="Search YouTube and download matching videos. Note: uses a lot of your Google API quota")
         youtube_search_parser.add_argument("youtube_search_query", help="Search query")
-
-        # UPDATE PLEX
-        update_plex_parser = subparsers.add_parser("update-plex", help="Update your Plex library by scanning files for Aritst/Track information. Mostly for music videos")
-        update_plex_parser.add_argument("library_name", help="Name of the library, as it exists in Plex")
-        update_plex_parser.add_argument("--update-cache-for-artist", required=False, help="Name of artist whose cache data should be udpated")
-
-        # CLEANUP PLEX
-        cleanup_plex_parser = subparsers.add_parser("cleanup-plex", help="Cleanup your Plex library")
-        cleanup_plex_parser.add_argument("library_name", help="Name of the library, as it exists in Plex")
 
         moe_parser = subparsers.add_parser('moe', help="Download more music videos for all the artists already downloaded")
         moe_parser.add_argument("--reprocess", default=False, action="store_true", help="Reprocess all artists, even if they've already been processed before")
@@ -217,18 +207,6 @@ class DownloaderTool(NaqTool):
                     everything_history.save()
 
                 _delete_empty_artist_dirs()
-
-            elif args.command == "update-plex":
-                GlobalSettings().permissive = True
-                # GlobalSettings().interactive = True
-
-                Plex(args.library_name).update_library(args.update_cache_for_artist)
-
-            elif args.command == "cleanup-plex":
-                GlobalSettings().permissive = True
-                GlobalSettings().interactive = True
-
-                Plex(args.library_name).cleanup_library()
 
             elif args.command == "prune":
                 _delete_empty_artist_dirs()
