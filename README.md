@@ -1,7 +1,7 @@
-NAQ Tools
+NAQADATA Tools
 =========
 
-This repository contains NAQ tools and utilities (downloaders, subtitle tooling, and helper libraries). The project uses Bazel for builds, tests, and packaging.
+This repository contains tools and utilities (downloaders, subtitle tooling, and helper libraries). The project uses Bazel for builds, tests, and packaging.
 
 Quick table of contents
 - Building & running locally with Bazel
@@ -28,16 +28,16 @@ Notes:
 Running tests
 -------------
 
-Run all tests in the repository:
+Run all pytests in the repository:
 
 ```bash
-bazel test //... --test_output=errors
+bazel test //... --test_tag_filters=pytest
 ```
 
 To run a single package's tests, target that package instead (example):
 
 ```bash
-bazel test //naq_video_downloader:all --test_output=errors
+bazel test //naq_utils/... --test_tag_filters=pytest
 ```
 
 Building wheels & local packaging
