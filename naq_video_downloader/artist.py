@@ -1,5 +1,5 @@
 from typing import Dict, Generator
-from naq_utils import custom_logging as logging
+from naq_utils.custom_logging import logger
 from naq_video_downloader.theaudiodb import TheAudioDBAPI
 from naq_video_downloader.utils import GlobalSettings
 from naq_video_downloader.library_item import LibraryItem
@@ -9,7 +9,7 @@ import re
 
 class Artist(LibraryItem):
     def __init__(self, name: str):
-        audiodb_info = TheAudioDBAPI.artist_info(name)
+        audiodb_info = TheAudioDBAPI.artist_info(name) or {}
         super().__init__(audiodb_info)
 
     def __repr__(self) -> str:
@@ -37,7 +37,7 @@ class Artist(LibraryItem):
         nfo_path = self.download_path / f"artist.nfo"
 
         if not nfo_path.exists():
-            logging.info(f"Writing NFO for", value=self)
+            logger.info(f"Writing NFO for", value=self)
 
             root = ET.Element("artist")
 

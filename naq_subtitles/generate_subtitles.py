@@ -23,7 +23,7 @@ from enum import Enum
 from networkx.algorithms.connectivity.edge_augmentation import complement_edges
 
 from naq_utils.naq_tool import NaqTool
-from naq_utils import custom_logging as logging
+from naq_utils.custom_logging import logger
 
 class AudioExtractionMethod(Enum):
     MoviePy = "moviepy"
@@ -31,7 +31,7 @@ class AudioExtractionMethod(Enum):
 
 def run_cmd_oneline(cmd: str):
     proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-    while proc.poll() is None:
+    while proc.poll() is None and proc.stdout:
         for line in proc.stdout:
             sys.stdout.write(" " * 100)  # clear the prev line to avoid noise
             sys.stdout.write("\r")
@@ -51,22 +51,23 @@ def extracted_audio_moviepy(video_path: Path) -> Path:
     audio_path = cache_path / f"{video_path.stem}.mp3"
 
     if not audio_path.exists():
-        logging.warning(f" - Extracting audio from", value=video_path)
+        logger.warning(f" - Extracting audio from", value=video_path)
         with contextlib.redirect_stdout(open(os.devnull, "w")), contextlib.redirect_stderr(open(os.devnull, "w")):
             video = VideoFileClip(video_path)
             audio = video.audio
+            assert audio
 
             audio.write_audiofile(audio_path, logger=None)
 
             video.close()
             audio.close()
     else:
-        logging.warning(f" - Using cached audio", value=audio_path)
+        logger.warning(f" - Using cached audio", value=audio_path)
 
     return audio_path
 
 
-def extracted_audio_ffmpeg(video_path: Path) -> Path:
+def extracted_audio_ffmpeg(video_path: Path) -> Path | None:
     cache_path = Path("~/.subtitle-cache/mp3s").expanduser()
     cache_path.mkdir(exist_ok=True, parents=True)
 
@@ -76,13 +77,13 @@ def extracted_audio_ffmpeg(video_path: Path) -> Path:
         audio_path = cache_path / f"{video_path.stem}.{ext}"
 
         if not audio_path.exists():
-            logging.warning(f" - Extracting audio from", value=video_path)
+            logger.warning(f" - Extracting audio from", value=video_path)
             if run_cmd_oneline(f'ffmpeg -i "{video_path}" -q:a 0 -map a "{audio_path}"') != 0:
                 if audio_path.exists():
                     audio_path.unlink()
                 continue
         else:
-            logging.warning(f" - Using cached audio", value=audio_path)
+            logger.warning(f" - Using cached audio", value=audio_path)
 
         return audio_path
 
@@ -108,7 +109,7 @@ def has_subtitles(video_path: Path) -> bool:
 class SubtitleGenerator:
     def __init__(self, engine_module: ModuleType, model: str, extract_audio_only: bool):
         self.engine_module = engine_module
-        logging.status(f"Using Whisper module: {self.engine_module.__name__}")
+        logger.status(f"Using Whisper module: {self.engine_module.__name__}")
         self.extract_audio_only = extract_audio_only
 
         try:
@@ -125,34 +126,35 @@ class SubtitleGenerator:
         prefix = f"[{index} / {out_of}] "
 
         if subtitle_path.exists() and not overwrite:
-            logging.status(f"Skipping [exists]", value=video_path, prefix=prefix)
+            logger.status(f"Skipping [exists]", value=video_path, prefix=prefix)
             return
 
         if alt_subtitle_path.exists() and not overwrite:
             if not subtitle_path.exists():
                 subtitle_path = alt_subtitle_path
 
-            logging.status(f"Skipping [alt-exists]", value=video_path, prefix=prefix)
+            logger.status(f"Skipping [alt-exists]", value=video_path, prefix=prefix)
             return
 
-        logging.status(f"Generating Subtitles for", value=video_path, prefix=prefix)
+        logger.status(f"Generating Subtitles for", value=video_path, prefix=prefix)
 
         try:
             audio_path = extracted_audio_moviepy(video_path)
         except Exception as e_moviepy:
-            logging.error(f"Failed generation with moviepy. Trying with ffmpeg", value=video_path)
-            logging.warning(f"  - {e_moviepy}")
+            logger.error(f"Failed generation with moviepy. Trying with ffmpeg", value=video_path)
+            logger.warning(f"  - {e_moviepy}")
             try:
                 audio_path = extracted_audio_ffmpeg(video_path)
+                assert audio_path
             except Exception as e_ffmpeg:
-                logging.error(f"Failed generation with ffmpeg", value=video_path)
-                logging.warning(f"  - {e_ffmpeg}")
+                logger.error(f"Failed generation with ffmpeg", value=video_path)
+                logger.warning(f"  - {e_ffmpeg}")
                 return
 
         if self.extract_audio_only:
             return
 
-        logging.status(f"Generating SRT File", value=subtitle_path)
+        logger.status(f"Generating SRT File", value=subtitle_path)
         result = self.whisper_model.transcribe(str(audio_path), verbose=verbose, language="en", vad=True, vad_threshold=0.35)
 
         def _format_timedelta(td: timedelta) -> str:
@@ -201,13 +203,15 @@ class GenSubsTool(NaqTool):
         self.parser.add_argument("--quit-after", type=int, default=None, help="Quit after specified number of seconds.")
 
     def main(self, args: argparse.Namespace):
+        import logging
+        
         # Configure logging based on the parsed argument
-        logging.basicConfig(level=getattr(logging, args.log_level))
+        logger.setLevel(getattr(logging, args.log_level))
 
         try:
             import torch
         except ImportError:
-            logging.error("You do not appear to have CUDA installed. Check README for instructions")
+            logger.error("You do not appear to have CUDA installed. Check README for instructions")
             sys.exit(1)
 
         generator = SubtitleGenerator(whisper if args.module == "whisper" else stable_whisper, args.model,
@@ -248,7 +252,7 @@ class GenSubsTool(NaqTool):
                     )
 
                 if args.quit_after and time.time() - start > args.quit_after:
-                    logging.warning(f" Exiting after {args.quit_after} seconds.")
+                    logger.warning(f" Exiting after {args.quit_after} seconds.")
                     break
 
         except KeyboardInterrupt:
@@ -256,13 +260,15 @@ class GenSubsTool(NaqTool):
 
 
 def main():
+    import logging
+
     parser = argparse.ArgumentParser(description="Generate subtitles for video files using Whisper or Stable Whisper.")
 
     parser.add_argument('--log-level', choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
                             default='WARNING', help='Set the logging level')
     
     args = parser.parse_args()
-    logging.init(getattr(logging, args.log_level.upper()))
+    logger.setLevel(getattr(logging, args.log_level.upper()))
 
     GenSubsTool(parser).main(args)
 

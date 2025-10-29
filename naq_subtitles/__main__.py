@@ -1,6 +1,5 @@
 import argparse
 
-from naq_utils import custom_logging as logging
 from naq_utils.naq_tool import NaqTool
 from naq_subtitles.generate_subtitles import GenSubsTool
 from naq_subtitles.rename_videos_and_subtitles import RenameTool

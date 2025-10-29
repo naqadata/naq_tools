@@ -1,5 +1,5 @@
 from typing import Dict, Optional
-from naq_utils import custom_logging as logging
+from naq_utils.custom_logging import logger
 from naq_video_downloader.utils import RequestCache
 from naq_video_downloader.exceptions import SkipVideo
 
@@ -22,7 +22,7 @@ class ManualInfo:
         if manual_info:
             return manual_info
 
-        logging.warning("Entering artist details manually. Ctrl-C to skip altogether.")
+        logger.warning("Entering artist details manually. Ctrl-C to skip altogether.")
 
         try:
             artist_name = input(f"Enter artist name manually (or Enter to accept '{artist_name}'): ") or artist_name
@@ -46,7 +46,7 @@ class ManualInfo:
         if manual_info:
             return manual_info
 
-        logging.warning("Entering track details manually. Ctrl-C to skip altogether.")
+        logger.warning("Entering track details manually. Ctrl-C to skip altogether.")
 
         try:
             artist_name = input(f"Enter manual artist (or enter to accept '{artist_name}'): ") or artist_name

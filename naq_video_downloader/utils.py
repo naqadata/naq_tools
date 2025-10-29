@@ -116,8 +116,8 @@ class GlobalSettings:
         self._smd["print_index"] = value
 
     @property
-    def min_view_count(self) -> int | None:
-        return self._smd.get("min_view_count", None)
+    def min_view_count(self) -> int:
+        return self._smd.get("min_view_count", 0)
 
     @min_view_count.setter
     def min_view_count(self, value: Optional[int]):

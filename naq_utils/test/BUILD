@@ -9,3 +9,12 @@ pytest_test(
         "//naq_utils:console",
     ],
 )
+
+pytest_test(
+    name = "test_logging",
+    test = "test_logging.py",
+    deps = [
+        requirement("colorama"),
+        "//naq_utils:custom_logging",
+    ],
+)

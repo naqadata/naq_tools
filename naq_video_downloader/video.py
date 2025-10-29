@@ -2,7 +2,7 @@ from typing import Generator
 from pathlib import Path
 import re
 
-from naq_utils import custom_logging as logging
+from naq_utils.custom_logging import logger
 from naq_video_downloader.library_item import LibraryItem
 from naq_video_downloader.artist import Artist
 from naq_video_downloader.theaudiodb import TheAudioDBAPI
@@ -72,7 +72,7 @@ class Video(LibraryItem):
 
             return cls(youtube_id, match.artist_name, match.song_title, full_title=match.full_song_title)
         else:
-            logging.debug(f"No title match: {title}")
+            logger.debug(f"No title match: {title}")
 
         return None
 
@@ -88,7 +88,7 @@ class Video(LibraryItem):
         if match:
             return cls(youtube_id, match.artist_name, match.song_title, full_title=match.full_song_title)
         else:
-            logging.debug(f"No title match: {title}")
+            logger.debug(f"No title match: {title}")
             return None
 
     @classmethod
@@ -103,7 +103,7 @@ class Video(LibraryItem):
             try:
                 yield Video(video_dict["strMusicVid"], artist.name, video_dict["strTrack"])
             except TrackNotFound as e:
-                logging.warning(str(e))
+                logger.warning(str(e))
 
     # @classmethod
     # def for_artist_and_song(cls, artist_name: str, song_title: str, full_title: str = None, update_cache: bool = False) -> Optional["Video"]:
@@ -199,7 +199,7 @@ class Video(LibraryItem):
                 break
 
         if video_file_path:
-            logging.info(f"Writing NFO for", value=self)
+            logger.info(f"Writing NFO for", value=self)
 
             artist_info = self.artist._audiodb_info
 
@@ -233,20 +233,20 @@ class Video(LibraryItem):
 
         try:
             if self.is_downloaded():
-                logging.success(f"Already downloaded, so skipping", value=self)
+                logger.success(f"Already downloaded, so skipping", value=self)
                 return
 
-            logging.info(f"Downloading Video", value=self)
+            logger.info(f"Downloading Video", value=self)
 
             downloaded_files = YouTubeAPI.download(self.youtube_url, self.download_path)
 
             if downloaded_files:
-                logging.info(f"Successfully downloaded", value=self)
+                logger.info(f"Successfully downloaded", value=self)
 
                 self.save_nfo_file(downloaded_files)
 
                 if self.artist.art_url:
-                    logging.info("Fetching Artist Art from", value=self.artist.art_url)
+                    logger.info("Fetching Artist Art from", value=self.artist.art_url)
                     fetch_art(self.artist.art_url, self.artist.download_path)
 
                 # save ourselves alongside the video for future reference
@@ -257,8 +257,8 @@ class Video(LibraryItem):
             else:
                 if self.download_path.exists():
                     self.download_path.unlink()
-                logging.error("Failed to download", value=self)
+                logger.error("Failed to download", value=self)
         except (ArtistNotFound, TrackNotFound) as e:
-            logging.info(str(e))
+            logger.info(str(e))
         except Exception as e:
-            logging.exception(f"Unhandled exception while downloading", value=e)
+            logger.exception(f"Unhandled exception while downloading", value=e)

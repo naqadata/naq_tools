@@ -1,7 +1,7 @@
 import argparse
 import signal
 from naq_video_downloader.__main__ import DownloaderTool
-from naq_utils import custom_logging as logging
+from naq_utils.custom_logging import logger
 import warnings
 
 subtitle_support: bool = True
@@ -15,7 +15,7 @@ except (OSError, ValueError, ImportError) as e:
 
 
 def handle_sigint(signum, frame):
-    logging.info("Exiting naq_tools...")
+    logger.info("Exiting naq_tools...")
     exit(0)
 
 
@@ -36,7 +36,7 @@ def main():
 
     args = parser.parse_args()
 
-    logging.init(getattr(logging, args.log_level.upper()))
+    logger.init(getattr(logging, args.log_level.upper()))
 
     if args.tool == "downloader":
         downloader_tool.main(args)

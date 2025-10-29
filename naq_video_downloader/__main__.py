@@ -1,8 +1,7 @@
 import argparse
 import time
 
-from naq_utils import console
-from naq_utils import custom_logging as logging
+from naq_utils.custom_logging import logger
 from naq_utils.naq_tool import NaqTool
 from naq_video_downloader.youtube_api import YouTubeAPI, SkipVideo, DEFAULT_DOWNLOAD_MIN_VIEW_COUNT
 from naq_video_downloader.utils import GlobalSettings
@@ -75,7 +74,7 @@ class DownloaderTool(NaqTool):
         def _delete_empty_artist_dirs():
             for item in Path.cwd().iterdir():
                 if item.is_dir() and not any(item.iterdir()):
-                    logging.status("Deleting empty directory", value=item)
+                    logger.status("Deleting empty directory", value=item)
                     item.rmdir()
 
         def _remove_duplicate_videos():
@@ -92,7 +91,7 @@ class DownloaderTool(NaqTool):
                             already_seen.add(key)
 
             for duplicate in duplicates:
-                logging.status("Removing duplicate video", value=duplicate)
+                logger.status("Removing duplicate video", value=duplicate)
                 shutil.rmtree(duplicate)
 
         try:
@@ -113,12 +112,12 @@ class DownloaderTool(NaqTool):
                     if args.loop_interval == 0:
                         break
 
-                    logging.status(f"Waiting {args.loop_interval} seconds before downloading next item")
+                    logger.status(f"Waiting {args.loop_interval} seconds before downloading next item")
                     time.sleep(args.loop_interval)
 
             elif args.command == "list-playlists":
                 header = f"{'Playlist ID':<37} | {'Title':<50} | {'Music Videos':^16} | {'Download Path':<50}"
-                console.print_success("-" * len(header) + f"\n{header}\n" + "-" * len(header))
+                logger.success("-" * len(header) + f"\n{header}\n" + "-" * len(header))
                 youtube = YouTubeAPI()
 
                 for playlist_id, download_info, playlist_info in youtube.get_downloaded_playlists():
@@ -149,7 +148,7 @@ class DownloaderTool(NaqTool):
                 known_playlists = youtube.get_downloaded_playlists()
 
                 for idx, (playlist_id, download_info, playlist_info) in enumerate(known_playlists):
-                    logging.status(f"Downloading Playlist {idx+1}/{len(known_playlists)}: {playlist_info['title']}")
+                    logger.status(f"Downloading Playlist {idx+1}/{len(known_playlists)}: {playlist_info['title']}")
                     if download_info.music_videos and args.playlist_type in ["music-video", "all"]:
                         youtube.download_music_video_playlist(playlist_id)
                     elif not download_info.music_videos and args.playlist_type in ["general", "all"]:
@@ -180,21 +179,21 @@ class DownloaderTool(NaqTool):
                     artist = Artist(artist_name)
 
                     if not args.reprocess and artist.name in everything_history.settings:
-                        logging.success(f"Already downloaded everything for", value=artist)
+                        logger.success(f"Already downloaded everything for", value=artist)
                         continue
 
-                    console.print_status("-"*120 + f"\nDownloading more of '{artist}'\n" + "-" * 120)
+                    logger.status("-"*120 + f"\nDownloading more of '{artist}'\n" + "-" * 120)
 
                     search_generator = Video.for_artist(artist) if args.search_engine == "audiodb" else youtube.search(f"{artist.name} music videos")
 
                     for video in search_generator:
                         if video.view_count < GlobalSettings().min_view_count:
-                            logging.warning(f"Skipping download of video with {video.view_count} views", value=video)
+                            logger.warning(f"Skipping download of video with {video.view_count} views", value=video)
                             skipped_downloads.settings.setdefault(artist.name, {})[video.youtube_id] = dict(title=video.song_title, view_count=video.view_count)
                             skipped_downloads.save()
                             continue
                         else:
-                            console.print_status(f" -- Downloading {video}")
+                            logger.status(f" -- Downloading {video}")
                             video.download()
 
                     everything_history.settings[artist.name] = True
@@ -216,7 +215,7 @@ class DownloaderTool(NaqTool):
                 # go through each obj file and perform any cleanup actions
 
                 # delete any old video obj files
-                logging.status(f"Deleting all VIDEO OBJ files...")
+                logger.status(f"Deleting all VIDEO OBJ files...")
                 if not args.dryrun:
                     subprocess.run("find . -name *.video.obj -exec rm -f {} \\;", shell=True)
 
@@ -235,10 +234,10 @@ class DownloaderTool(NaqTool):
                     if not args.dryrun:
                         artist.save_obj_file()
 
-                    console.print_status("-"*120 + f"\n{artist}\n" + "-" * 120)
+                    logger.status("-"*120 + f"\n{artist}\n" + "-" * 120)
                     for mp4 in artist_dir.rglob("*.mp4"):
                         counter += 1
-                        logging.info(f"  - {counter:04} {mp4}")
+                        logger.info(f"  - {counter:04} {mp4}")
 
                         try:
                             name = f"{artist_name} - {mp4.stem.split('-', maxsplit=1)[1].strip()}"
@@ -248,6 +247,7 @@ class DownloaderTool(NaqTool):
 
                         matched_title = match_title(name)
                         try:
+                            raise RuntimeError("THIS PATH NEEDS FIXING")
                             video = Video.for_artist_and_song(artist.name, matched_title.song_title,
                                                             full_title=matched_title.full_song_title)
                         except SkipVideo:
@@ -258,10 +258,10 @@ class DownloaderTool(NaqTool):
 
                         video_map.setdefault(artist.name, {}).setdefault(video.full_title.lower().strip(), []).append(mp4)
 
-                        logging.info(f"     - {video}")
+                        logger.info(f"     - {video}")
                         if mp4 != video.download_path:
-                            logging.debug(f"     - FROM: {mp4}")
-                            logging.debug(f"     - TO: {video.download_path}")
+                            logger.debug(f"     - FROM: {mp4}")
+                            logger.debug(f"     - TO: {video.download_path}")
                             if not args.dryrun:
                                 shutil.move(mp4, video.download_path)
 
@@ -271,14 +271,14 @@ class DownloaderTool(NaqTool):
                         vtt_to_path = video.download_path.parent / f"{video.download_path.stem}.en.vtt"
 
                         if jpg_path.exists() and jpg_path != jpg_to_path:
-                            logging.debug(f"     - JPG FROM: {jpg_path}")
-                            logging.debug(f"     - JPG TO: {jpg_to_path}")
+                            logger.debug(f"     - JPG FROM: {jpg_path}")
+                            logger.debug(f"     - JPG TO: {jpg_to_path}")
                             if not args.dryrun:
                                 shutil.move(jpg_path, jpg_to_path)
 
                         if vtt_path.exists() and vtt_path != vtt_to_path:
-                            logging.debug(f"     - VTT FROM: {vtt_path}")
-                            logging.debug(f"     - VTT TO: {vtt_to_path}")
+                            logger.debug(f"     - VTT FROM: {vtt_path}")
+                            logger.debug(f"     - VTT TO: {vtt_to_path}")
                             if not args.dryrun:
                                 shutil.move(vtt_path, vtt_to_path)
 
@@ -291,28 +291,28 @@ class DownloaderTool(NaqTool):
                             continue
 
                         if album_dir.is_dir() and album_dir.name.startswith("S"):
-                            logging.info(f"     - DELETE ALBUM DIR: {album_dir}")
+                            logger.info(f"     - DELETE ALBUM DIR: {album_dir}")
                             if not args.dryrun:
                                 shutil.rmtree(album_dir)
 
-                logging.info("-" * 120)
-                logging.info("-" * 120)
-                logging.info("-" * 120)
+                logger.info("-" * 120)
+                logger.info("-" * 120)
+                logger.info("-" * 120)
 
                 for artist_name, title_map in video_map.items():
                     for title, file_list in title_map.items():
                         if len(file_list) > 1:
-                            logging.warning(f"Deleting duplicates", value=f"{artist_name} -> {title}")
+                            logger.warning(f"Deleting duplicates", value=f"{artist_name} -> {title}")
                             if not args.dryrun:
                                 for path in file_list[1:]:
                                     path.unlink()
 
-                logging.info("-" * 120)
-                logging.info("-" * 120)
-                logging.info("-" * 120)
+                logger.info("-" * 120)
+                logger.info("-" * 120)
+                logger.info("-" * 120)
 
                 for bad_file in badly_formatted_files:
-                    logging.warning(f"Deleting file with malformed name", value=bad_file)
+                    logger.warning(f"Deleting file with malformed name", value=bad_file)
                     if not args.dryrun:
                         bad_file.unlink()
 

@@ -5,7 +5,7 @@ import urllib3
 import urllib.parse
 import json
 
-from naq_utils import custom_logging as logging
+from naq_utils.custom_logging import logger
 from naq_video_downloader.utils import RequestCache
 
 IMVDB_API_KEY = "oPA5IK14HVj9srjiAa6O6eYicQdnWXHBFcnr8kVG"
@@ -36,7 +36,7 @@ class IMVDB:
         arg_string = urllib.parse.urlencode(params) if params else ""
         url = urllib.parse.urljoin(IMVDB_URL, path) + f"?{arg_string}"
 
-        logging.debug(f"Requesting '{url}'")
+        logger.debug(f"Requesting '{url}'")
 
         if cls._http_pool is None:
             cls._http_pool = urllib3.PoolManager()
@@ -46,7 +46,7 @@ class IMVDB:
 
             response = cls._http_pool.request("GET", url, headers=headers)
             if response.status >= 500:
-                logging.warning(f"Request '{url}' failed with status code '{response.status}'. Retrying in 2 seconds...")
+                logger.warning(f"Request '{url}' failed with status code '{response.status}'. Retrying in 2 seconds...")
                 time.sleep(2)
                 attempts += 1
                 continue
@@ -63,7 +63,7 @@ class IMVDB:
         current_page = 1
         num_returned = 0
 
-        logging.info(f"Searching IMVDB for '{query}'")
+        logger.info(f"Searching IMVDB for '{query}'")
 
         while True:
             response = cls._request("search/videos", {"q": query, "per_page": 25, "page": current_page})
@@ -89,14 +89,14 @@ class IMVDB:
                     if source["source_data"] == youtube_id:
                         return video_details
         else:
-            logging.warning(f"Did not find result for '{youtube_id}' for query '{query}' within {MAX_SEARCH_RESULTS} entries")
+            logger.warning(f"Did not find result for '{youtube_id}' for query '{query}' within {MAX_SEARCH_RESULTS} entries")
             return None
 
 
 def main():
     import argparse
 
-    logging.basicConfig(level=logging.DEBUG)
+    logger.basicConfig(level=logger.DEBUG)
 
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(dest="command")
