@@ -25,6 +25,18 @@ Notes:
   `bazel run //naq_toolbox:naq_toolbox -- downloader --log-level DEBUG`
 - The toolbox and top-level entrypoints provide subcommands; the main available subcommands are `downloader` and `subtitles` (when subtitle support is available).
 
+Feature Modules
+---------------
+
+- __naq_utils__ - utility modules such as logging and base class for Tools
+- __naq_subtitles__ - Tool module that provides subtitle operations: AI generation, renaming, etc
+  - See Subtitles [README](naq_subtitles/README.md) for further details
+- __naq_video_downloader__ - Tool module that provides downloading ability from YouTube, Tubi, and others
+  - See Downloader [README](naq_video_downloader/README.md) for further details
+- __naq_toolbox__ - Module intended as top-level entry-point, bringing all Tool modules together
+  - See Toolbox [README](naq_toolbox/README.md) for further details
+
+
 Running tests
 -------------
 
