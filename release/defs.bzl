@@ -3,6 +3,7 @@
 load("@rules_python//python:defs.bzl", "py_binary")
 load("@pypi//:requirements.bzl", "requirement")
 
+
 def naq_release(name, app_target):
     """Creates filegroup and genrule targets for packaging a Python application as a zip executable.
 
@@ -11,9 +12,9 @@ def naq_release(name, app_target):
       app_target: The Bazel target of the Python application to package.
     """
 
-    filegroup_name = name + "-_fg"
+    filegroup_name = name + "-src"
     release_name = name + "-pyzip"
-    install_name = name + "-install"
+    install_name = name + ".install"
 
     native.filegroup(
         name = filegroup_name,

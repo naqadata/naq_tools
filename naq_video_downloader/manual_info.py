@@ -1,7 +1,7 @@
 from typing import Dict, Optional
 from naq_utils import custom_logging as logging
-from web_video_downloader.utils import RequestCache
-from web_video_downloader.exceptions import SkipVideo
+from naq_video_downloader.utils import RequestCache
+from naq_video_downloader.exceptions import SkipVideo
 
 
 class ManualInfo:

@@ -1,6 +1,6 @@
 from typing import Generator
 from pathlib import Path
-from web_video_downloader.utils import HOME_SAVE_DIR
+from naq_video_downloader.utils import HOME_SAVE_DIR
 import pickle
 
 

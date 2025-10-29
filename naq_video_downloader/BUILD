@@ -1,6 +1,8 @@
 load("@pypi//:requirements.bzl", "requirement")
 load("@rules_python//python:defs.bzl", "py_library", "py_binary")
+load("@rules_python//python:packaging.bzl", "py_wheel")
 
+exports_files(["requirements.txt"], visibility = ["//:__pkg__"])
 
 py_library(
     name = "utils",
@@ -100,7 +102,7 @@ py_library(
 )
 
 py_binary(
-    name = "web_video_downloader",
+    name = "naq_video_downloader",
     srcs =["__main__.py"],
     main = "__main__.py",
     deps = [
@@ -113,7 +115,38 @@ py_binary(
     ],
     visibility = [
         "//release:__pkg__",
-        "//:__pkg__",
+        "//naq_toolbox:__pkg__",
     ],
 )
 
+filegroup(
+    name = "downloader_binaries",
+    srcs = [":yt-dlp"],
+)
+
+py_wheel(
+    name = "naq_video_downloader.wheel",
+    distribution = "naq_video_downloader",
+    version = "1.0",
+    deps = [
+        ":naq_video_downloader",
+        ":artist",
+        ":exceptions",
+        ":imvdb",
+        ":library_item",
+        ":manual_info",
+        ":media_server",
+        ":theaudiodb",
+        ":utils",
+        ":video",
+        ":youtube_api",
+        ":downloader_binaries",
+    ],
+    requires_file = ":requirements.txt",
+    entry_points = {
+        "console_scripts": [
+            "naq_video_downloader = naq_video_downloader.__main__:main",
+        ],
+    },
+    visibility = ["//release:__pkg__"],
+)

@@ -1,4 +1,5 @@
 load("@pypi//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_binary")
 
 def naq_py_binary(name, deps, **kwargs):
     """A thin wrapper around py_binary to include common dependencies."""
@@ -6,9 +7,8 @@ def naq_py_binary(name, deps, **kwargs):
     deps = (deps or []) + [
         requirement("zipapp"),
     ]
-
     # standard py_binary target
-    native.py_binary(
+    py_binary(
         name = name,
         **kwargs,
     )

@@ -31,10 +31,7 @@ class RenameTool(NaqTool):
         self.parser.add_argument("--season", type=int, required=False, default=None)
         self.parser.add_argument("--start-episode", type=int, required=False, default=None)
 
-    def main(self):
-        self.populate_parser(self.parser)
-        args = self.parser.parse_args()
-
+    def main(self, args: argparse.Namespace):
         file_map = {}
 
         show_name = Path().absolute().parent.name
@@ -98,7 +95,10 @@ class RenameTool(NaqTool):
                         shutil.move(src, dest)
 
 
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser(description="Rename video files, along with SRT files")
-    RenameTool(parser).main()
+    RenameTool(parser).main(parser.parse_args())
 
+
+if __name__ == '__main__':
+    main()

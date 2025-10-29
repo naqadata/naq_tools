@@ -15,7 +15,7 @@ from threading import Lock
 import urllib3
 
 
-HOME_SAVE_DIR = Path.home() / ".web_video_downloader"
+HOME_SAVE_DIR = Path.home() / ".naq_video_downloader"
 HOME_SAVE_DIR.mkdir(exist_ok=True)
 
 

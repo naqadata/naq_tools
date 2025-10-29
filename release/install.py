@@ -29,13 +29,13 @@ print(f"  Runfiles:   {target_runfiles_path}")
 install_exec_path = INSTALL_DIR / target_exec_path.name
 install_runfiles_path = INSTALL_DIR / target_runfiles_path.name
 
-if install_exec_path.exists():
-    print(f"Removing existing installation at {install_exec_path}")
-    subprocess.run(["sudo", "rm", "-rf", str(install_exec_path)], check=True)
-    if install_runfiles_path.exists():
-        subprocess.run(["sudo", "rm", "-rf", str(install_runfiles_path)], check=True)
+# if install_exec_path.exists():
+#     print(f"Removing existing installation at {install_exec_path}")
+#     subprocess.run(["sudo", "rm", "-rf", str(install_exec_path)], check=True)
+#     if install_runfiles_path.exists():
+#         subprocess.run(["sudo", "rm", "-rf", str(install_runfiles_path)], check=True)
 
 subprocess.run(["sudo", "cp", str(target_exec_path), str(install_exec_path)], check=True)
-subprocess.run(["sudo", "cp", "-rL", str(target_runfiles_path), str(install_runfiles_path)], check=True)
+subprocess.run(["sudo", "rsync", "-rLptD", str(target_runfiles_path), str(install_runfiles_path)], check=True)
 
 print(f"Installed {target_path.name} to {install_exec_path}")

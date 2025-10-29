@@ -1,4 +1,4 @@
-from web_video_downloader.__main__ import TheAudioDBAPI
+from naq_video_downloader.__main__ import TheAudioDBAPI
 
 
 def test_artist_info():

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 
 class NaqTool(ABC):
     def __init__(self, parser: ArgumentParser):
@@ -12,6 +12,6 @@ class NaqTool(ABC):
         ...
 
     @abstractmethod
-    def main(self):
+    def main(self, args: Namespace):
         """Execute the main functionality of the tool."""
         ...

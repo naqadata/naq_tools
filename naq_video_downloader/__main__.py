@@ -4,9 +4,9 @@ import time
 from naq_utils import console
 from naq_utils import custom_logging as logging
 from naq_utils.naq_tool import NaqTool
-from web_video_downloader.youtube_api import YouTubeAPI, SkipVideo, DEFAULT_DOWNLOAD_MIN_VIEW_COUNT
-from web_video_downloader.utils import GlobalSettings
-from web_video_downloader.video import Video
+from naq_video_downloader.youtube_api import YouTubeAPI, SkipVideo, DEFAULT_DOWNLOAD_MIN_VIEW_COUNT
+from naq_video_downloader.utils import GlobalSettings
+from naq_video_downloader.video import Video
 from pathlib import Path
 import subprocess
 import shutil
@@ -23,8 +23,6 @@ class DownloaderTool(NaqTool):
         self.parser.add_argument("--min-view-count", type=int, default=DEFAULT_DOWNLOAD_MIN_VIEW_COUNT)
         self.parser.add_argument("--download-dir", type=Path, default=Path.cwd(),
                                     help='Where downloads should be stored. Default: %(default)s')
-        self.parser.add_argument("--log-level", choices=['debug', 'info', 'status', 'warning', 'error', 'critical'],
-                            default="status", help='Logging level. Default: %(default)s')
 
         subparsers = self.parser.add_subparsers(dest='command')
 
@@ -68,11 +66,7 @@ class DownloaderTool(NaqTool):
 
         subparsers.add_parser("analyze")
 
-    def main(self):
-        args = self.parser.parse_args()
-
-        logging.init(getattr(logging, args.log_level.upper()))
-
+    def main(self, args: argparse.Namespace):
         GlobalSettings().download_dir = args.download_dir
         GlobalSettings().interactive = args.interactive
         GlobalSettings().permissive = args.permissive
@@ -168,8 +162,8 @@ class DownloaderTool(NaqTool):
                     video.download()
 
             elif args.command == "moe":
-                from web_video_downloader.artist import Artist
-                from web_video_downloader.utils import SettingsFile
+                from naq_video_downloader.artist import Artist
+                from naq_video_downloader.utils import SettingsFile
 
                 youtube = YouTubeAPI()
 
@@ -213,8 +207,8 @@ class DownloaderTool(NaqTool):
                 _remove_duplicate_videos()
 
             elif args.command == "reprocess":
-                from web_video_downloader.utils import match_title
-                from web_video_downloader.artist import Artist
+                from naq_video_downloader.utils import match_title
+                from naq_video_downloader.artist import Artist
 
                 GlobalSettings().permissive = True
                 GlobalSettings().interactive = True
@@ -333,6 +327,13 @@ class DownloaderTool(NaqTool):
             print("")
 
 
-if __name__ == "__main__":    
+def main():
     parser = argparse.ArgumentParser(description="Web Video Downloader Tool")
-    DownloaderTool(parser).main()
+    tool = DownloaderTool(parser)
+    
+    args = parser.parse_args()
+    tool.main(args)
+
+
+if __name__ == "__main__":    
+    main()

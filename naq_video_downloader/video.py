@@ -3,11 +3,11 @@ from pathlib import Path
 import re
 
 from naq_utils import custom_logging as logging
-from web_video_downloader.library_item import LibraryItem
-from web_video_downloader.artist import Artist
-from web_video_downloader.theaudiodb import TheAudioDBAPI
-from web_video_downloader.exceptions import ArtistNotFound, TrackNotFound
-from web_video_downloader.utils import match_title, fetch_art
+from naq_video_downloader.library_item import LibraryItem
+from naq_video_downloader.artist import Artist
+from naq_video_downloader.theaudiodb import TheAudioDBAPI
+from naq_video_downloader.exceptions import ArtistNotFound, TrackNotFound
+from naq_video_downloader.utils import match_title, fetch_art
 
 youtube_api = None
 
@@ -78,7 +78,7 @@ class Video(LibraryItem):
 
     @classmethod
     def from_youtube_id(cls, youtube_id: str) -> "Video | None":
-        from web_video_downloader.youtube_api import YouTubeAPI
+        from naq_video_downloader.youtube_api import YouTubeAPI
         youtube = YouTubeAPI()
 
         video_info = youtube.get_video_info(youtube_id)
@@ -138,7 +138,7 @@ class Video(LibraryItem):
     def youtube_info(self) -> dict:
         if not hasattr(self, "_youtube_info") or self._youtube_info is None:
             global youtube_api
-            from web_video_downloader.youtube_api import YouTubeAPI
+            from naq_video_downloader.youtube_api import YouTubeAPI
             youtube_api = youtube_api or YouTubeAPI()
             self._youtube_info = youtube_api.get_video_info(self.youtube_id) if self.youtube_id else None
         return self._youtube_info
@@ -180,7 +180,7 @@ class Video(LibraryItem):
     def is_downloaded(self) -> bool:
         if not self.artist.download_path.exists():
             return False
-
+        
         if not self.download_path.parent.exists():
             return False
 
@@ -229,7 +229,7 @@ class Video(LibraryItem):
 
 
     def download(self):
-        from web_video_downloader.youtube_api import YouTubeAPI
+        from naq_video_downloader.youtube_api import YouTubeAPI
 
         try:
             if self.is_downloaded():
