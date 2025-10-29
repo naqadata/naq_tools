@@ -1,0 +1,1 @@
+exports_files(["requirements.txt"], visibility = ["//:__pkg__"])

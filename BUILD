@@ -11,6 +11,7 @@ compile_pip_requirements_3_12(
         "//naq_utils:requirements.txt",
         "//naq_subtitles:requirements.txt",
         "//naq_video_downloader:requirements.txt",
+        "//test_drivers:requirements.txt",
     ],
     requirements_txt = "requirements_lock_3_12.txt",
 )
