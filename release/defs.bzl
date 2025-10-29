@@ -13,13 +13,14 @@ def naq_release(name, app_target):
     """
 
     filegroup_name = name + "-src"
-    release_name = name + "-pyzip"
+    release_name = name + ".pyzip"
     install_name = name + ".install"
 
     native.filegroup(
         name = filegroup_name,
         srcs = [app_target],
         output_group = "python_zip_file",
+        tags = ["manual"],
     )
 
     native.genrule(
@@ -27,6 +28,7 @@ def naq_release(name, app_target):
         srcs = [":" + filegroup_name],
         outs = [name],
         cmd = "echo '#!/usr/bin/env python3' > $@ && cat $(location :" + filegroup_name + ") >> $@ && chmod +x $@",
+        tags = ["manual"],
     )
     
     py_binary(
@@ -36,4 +38,5 @@ def naq_release(name, app_target):
         data = [app_target],
         deps = [requirement("bazel-runfiles")],
         args = ["$(location " + app_target + ")"],
+        tags = ["manual"],
     )

@@ -5,8 +5,8 @@ load("@rules_pkg//pkg/private/zip:zip.bzl", "pkg_zip")
 exports_files(["requirements.txt"], visibility = ["//:__pkg__"])
 
 naq_release(
-    name = "naq_tools",
-    app_target = "//:naq_tools",
+    name = "naq_toolbox",
+    app_target = "//naq_toolbox:naq_toolbox",
 )
 
 pkg_zip(
