@@ -27,32 +27,32 @@ class NaqLogger(logging.Logger):
                 msg = f"{Style.RESET_ALL}[{kwargs.pop('prefix')}] {msg}"
             super()._log(level, msg, args, **kwargs)
 
-    def temp(self, msg, *args, logger_name=None, **kwargs):
+    def temp(self, msg, *args, **kwargs):
         self._log(STATUS, msg, colors=Fore.BLACK+Back.MAGENTA, *args, **kwargs)
 
-    def debug(self, msg, *args, logger_name=None, **kwargs):
+    def debug(self, msg, *args, **kwargs):
         self._log(logging.DEBUG, msg, *args, **kwargs)
 
-    def info(self, msg, *args, logger_name=None, **kwargs):
+    def info(self, msg, *args, **kwargs):
         self._log(logging.INFO, msg, *args, **kwargs)
 
-    def status(self, msg, *args, logger_name=None, **kwargs):
+    def status(self, msg, *args, **kwargs):
         self._log(STATUS, msg, colors=Fore.BLUE, *args, **kwargs)
 
-    def success(self, msg, *args, logger_name=None, **kwargs):
+    def success(self, msg, *args, **kwargs):
         self._log(STATUS, msg, colors=Fore.GREEN, *args, **kwargs)
 
-    def warning(self, msg, *args, logger_name=None, **kwargs):
+    def warning(self, msg, *args, **kwargs):
         self._log(logging.WARNING, msg, colors=Fore.YELLOW, *args, **kwargs)
 
-    def error(self, msg, *args, logger_name=None, **kwargs):
+    def error(self, msg, *args, **kwargs):
         self._log(logging.ERROR, msg, colors=Fore.RED, *args, **kwargs)
 
-    def exception(self, msg, *args, logger_name=None, **kwargs):
+    def exception(self, msg, *args, **kwargs):
         kwargs["exc_info"] = True
         self._log(logging.ERROR, msg, colors=Fore.RED, *args, **kwargs)
 
-    def critical(self, msg, *args, logger_name=None, **kwargs):
+    def critical(self, msg, *args, **kwargs):
         self._log(logging.CRITICAL, msg, colors=Fore.RED, *args, **kwargs)
 
 

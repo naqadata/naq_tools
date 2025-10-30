@@ -7,7 +7,7 @@ import logging
 
 
 def handle_sigint(signum, frame):
-    logger.info("Exiting naq_tools...")
+    print("\nExiting naq_tools...")
     exit(0)
 
 
@@ -26,7 +26,7 @@ def main():
 
     args = parser.parse_args()
 
-    logger.init(getattr(logging, args.log_level.upper()))
+    logger.setLevel(getattr(logging, args.log_level.upper()))
 
     if args.tool == "downloader":
         downloader_tool.main(args)
@@ -35,8 +35,5 @@ def main():
 
 
 if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        print("\nExiting naq_tools...")
+    main()
         

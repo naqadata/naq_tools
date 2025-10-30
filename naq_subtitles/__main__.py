@@ -24,7 +24,7 @@ class SubtitlesTool(NaqTool):
             gen_subs_parser = subparsers.add_parser("generate", help="Generate subtitles for video files using Whisper AI")
             self._gen_subs_tool = GenSubsTool(gen_subs_parser)
 
-        rename_parser = subparsers.add_parser("rename_episodes", help="Rename show episodes and corresponding subtitles with standard: <Show Title> - ExxSyy")
+        rename_parser = subparsers.add_parser("rename", help="Rename show episodes and corresponding subtitles with standard: <Show Title> - ExxSyy")
         self._rename_tool = RenameTool(rename_parser)
 
         convert_parser = subparsers.add_parser("convert", help="Convert subtitlesn from one type to another")
@@ -33,7 +33,7 @@ class SubtitlesTool(NaqTool):
     def main(self, args: argparse.Namespace):
         if args.subtitle_command == "generate":
             self._gen_subs_tool.main(args)
-        elif args.subtitle_command == "rename_episodes":
+        elif args.subtitle_command == "rename":
             self._rename_tool.main(args)
         elif args.subtitle_command == "convert":
             self._convert_tool.main(args)
