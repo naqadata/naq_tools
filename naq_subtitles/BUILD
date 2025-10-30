@@ -28,10 +28,14 @@ py_binary(
 py_library(
     name = "rename_videos_and_subtitles",
     srcs = ["rename_videos_and_subtitles.py"],
-    deps = ["//naq_utils:naq_tool"],
+    deps = [
+        "//naq_utils:naq_tool",
+        "//naq_utils:custom_logging",
+    ],
     visibility = [
         "//naq_toolbox:__pkg__",
         "//release:__pkg__",
+        "//naq_subtitles/test:__pkg__",
     ],
 )
 
