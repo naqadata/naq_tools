@@ -2,16 +2,8 @@ import argparse
 import signal
 from naq_video_downloader.__main__ import DownloaderTool
 from naq_utils.custom_logging import logger
-import warnings
-
-subtitle_support: bool = True
-
-try:
-    from naq_subtitles.__main__ import SubtitlesTool
-except (OSError, ValueError, ImportError) as e:
-    truncated_error = str(e)[:256] + "..."
-    warnings.warn(f"Unable to support subtitle functionality: {truncated_error}")
-    subtitle_support = False
+from naq_subtitles.__main__ import SubtitlesTool
+import logging
 
 
 def handle_sigint(signum, frame):
@@ -30,9 +22,7 @@ def main():
     subparsers = parser.add_subparsers(dest="tool", required=True)
 
     downloader_tool = DownloaderTool(subparsers.add_parser("downloader", help="Web Video Downloader Tool"))
-
-    if subtitle_support:
-        subtitles_tool = SubtitlesTool(subparsers.add_parser("subtitles", help="Subtitle operations (i.e. Generation, Renaming, etc)"))
+    subtitles_tool = SubtitlesTool(subparsers.add_parser("subtitles", help="Subtitle operations (i.e. Generation, Renaming, etc)"))
 
     args = parser.parse_args()
 
@@ -40,7 +30,7 @@ def main():
 
     if args.tool == "downloader":
         downloader_tool.main(args)
-    elif subtitle_support and args.tool == "subtitles":
+    elif args.tool == "subtitles":
         subtitles_tool.main(args)
 
 

@@ -1,4 +1,4 @@
-NAQADATA Tools
+Naqadata Tools
 =========
 
 This repository contains tools and utilities (downloaders, subtitle tooling, and helper libraries). The project uses Bazel for builds, tests, and packaging.

@@ -1,8 +1,18 @@
 import argparse
+import warnings
 
 from naq_utils.naq_tool import NaqTool
-from naq_subtitles.generate_subtitles import GenSubsTool
 from naq_subtitles.rename_videos_and_subtitles import RenameTool
+from naq_subtitles.convert_subtitles import ConvertSubsTool
+
+subtitle_support = True
+
+try:
+    from naq_subtitles.generate_subtitles import GenSubsTool
+except (OSError, ValueError, ImportError) as e:
+    truncated_error = str(e)[:256] + "..."
+    warnings.warn(f"Subtitle generation is disabled: {truncated_error}")
+    subtitle_support = False
 
 
 class SubtitlesTool(NaqTool):
@@ -10,17 +20,23 @@ class SubtitlesTool(NaqTool):
     def _populate_parser(self):
         subparsers = self.parser.add_subparsers(dest="subtitle_command", required=True)
         
-        gen_subs_parser = subparsers.add_parser("generate", help="Generate subtitles for video files using Whisper AI")
-        self._gen_subs_tool = GenSubsTool(gen_subs_parser)
+        if subtitle_support:
+            gen_subs_parser = subparsers.add_parser("generate", help="Generate subtitles for video files using Whisper AI")
+            self._gen_subs_tool = GenSubsTool(gen_subs_parser)
 
         rename_parser = subparsers.add_parser("rename_episodes", help="Rename show episodes and corresponding subtitles with standard: <Show Title> - ExxSyy")
-        self._rename_parser = RenameTool(rename_parser)
+        self._rename_tool = RenameTool(rename_parser)
+
+        convert_parser = subparsers.add_parser("convert", help="Convert subtitlesn from one type to another")
+        self._convert_tool = ConvertSubsTool(convert_parser)
         
     def main(self, args: argparse.Namespace):
         if args.subtitle_command == "generate":
             self._gen_subs_tool.main(args)
         elif args.subtitle_command == "rename_episodes":
-            self._rename_parser.main(args)
+            self._rename_tool.main(args)
+        elif args.subtitle_command == "convert":
+            self._convert_tool.main(args)
 
 
 def main():

@@ -35,6 +35,16 @@ py_library(
     ],
 )
 
+py_library(
+    name = "convert_subtitles",
+    srcs = ["convert_subtitles.py"],
+    deps = ["//naq_utils:naq_tool"],
+    visibility = [
+        "//naq_toolbox:__pkg__",
+        "//release:__pkg__",
+    ],
+)
+
 py_binary(
     name = "naq_subtitles",
     srcs =["__main__.py"],
@@ -42,6 +52,7 @@ py_binary(
     deps = [
         ":generate_subtitles",
         ":rename_videos_and_subtitles",
+        ":convert_subtitles",
         "//naq_utils:naq_tool",
         "//naq_utils:custom_logging",
         "//naq_utils:console",
