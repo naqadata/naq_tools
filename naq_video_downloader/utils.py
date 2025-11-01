@@ -123,6 +123,22 @@ class GlobalSettings:
     def min_view_count(self, value: Optional[int]):
         self._smd["min_view_count"] = value
 
+    @property
+    def audiodb_api_key(self) -> str:
+        return self._smd.get("audiodb_api_key", "")
+    
+    @audiodb_api_key.setter
+    def audiodb_api_key(self, value: str):
+        self._smd["audiodb_api_key"] = value
+
+    @property
+    def google_api_key(self) -> str:
+        return self._smd.get("google_api_key", "")
+    
+    @google_api_key.setter
+    def google_api_key(self, value: str):
+        self._smd["google_api_key"] = value
+
 
 class RequestCache:
     CACHE_DIR = HOME_SAVE_DIR / ".request_cache"

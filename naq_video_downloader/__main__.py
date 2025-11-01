@@ -12,16 +12,24 @@ import shutil
 import emoji
 import re
 import sys
+import os
 
 
 class DownloaderTool(NaqTool):
     
     def _populate_parser(self):
-        self.parser.add_argument("--interactive", default=False, action="store_true")
-        self.parser.add_argument("--permissive", default=False, action="store_true")
-        self.parser.add_argument("--min-view-count", type=int, default=DEFAULT_DOWNLOAD_MIN_VIEW_COUNT)
+        self.parser.add_argument("--interactive", default=False, action="store_true",
+                                 help="Ask user for clarification when songs are not matched")
+        self.parser.add_argument("--permissive", default=False, action="store_true", 
+                                 help="Do not apply strict name policies to music videos from YouTube")
+        self.parser.add_argument("--min-view-count", type=int, default=DEFAULT_DOWNLOAD_MIN_VIEW_COUNT,
+                                 help="Downloads are skipped if the view count is below this threshold. Default: %(default)s")
         self.parser.add_argument("--download-dir", type=Path, default=Path.cwd(),
-                                    help='Where downloads should be stored. Default: %(default)s')
+                                 help='Where downloads should be stored. Default: %(default)s')
+        self.parser.add_argument("--audiodb-api-key", default=os.environ.get("AUDIODB_API_KEY"), 
+                                 help="API Key for use with theaudiodb API. Overrides AUDIODB_API_KEY env var, if specified.")
+        self.parser.add_argument("--google-api-key", default=os.environ.get("GOOGLE_API_KEY"), 
+                                 help="API Key for use with Google API. Overrides GOOGLE_API_KEY env var, if specified.")
 
         subparsers = self.parser.add_subparsers(dest='command')
 
@@ -70,6 +78,14 @@ class DownloaderTool(NaqTool):
         GlobalSettings().interactive = args.interactive
         GlobalSettings().permissive = args.permissive
         GlobalSettings().min_view_count = args.min_view_count
+        GlobalSettings().audiodb_api_key = args.audiodb_api_key
+        GlobalSettings().google_api_key = args.google_api_key
+
+        if not args.audiodb_api_key:
+            raise RuntimeError("Must specify an API key to use with TheAudioDB API. Use cmd line or AUDIODB_API_KEY env var")
+        
+        if not args.google_api_key:
+            raise RuntimeError("Must specify an API key to use with Google API. Use cmd line or GOOGLE_API_KEY env var")
 
         def _delete_empty_artist_dirs():
             for item in Path.cwd().iterdir():
