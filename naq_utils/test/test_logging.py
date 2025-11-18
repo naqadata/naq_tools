@@ -1,7 +1,7 @@
 from contextlib import redirect_stdout, redirect_stderr
 from io import StringIO
 from colorama import Fore, Back
-from naq_utils.custom_logging import logger
+from naq_utils.logging import logger
 import logging
 import pytest
 

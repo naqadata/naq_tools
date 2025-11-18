@@ -1,152 +1,92 @@
 load("@pypi//:requirements.bzl", "requirement")
-load("@rules_python//python:defs.bzl", "py_library", "py_binary")
+load("@rules_python//python:defs.bzl", "py_binary", "py_library")
 load("@rules_python//python:packaging.bzl", "py_wheel")
 
-exports_files(["requirements.txt"], visibility = ["//:__pkg__"])
+exports_files(
+    ["requirements.txt"],
+    visibility = ["//:__pkg__"],
+)
 
 py_library(
-    name = "utils",
-    srcs = ["utils.py"],
+    name = "settings",
+    srcs = ["settings.py"],
     deps = [
-        requirement("urllib3"),
-        requirement("shared_memory_dict"),
+        "//naq_utils:settings",
     ],
 )
 
 py_library(
-    name = "exceptions",
-    srcs = ["exceptions.py"],
-)
-
-py_library(
-    name = "manual_info",
-    srcs = ["manual_info.py"],
+    name = "youtube_video",
+    srcs = ["youtube_video.py"],
     deps = [
-        "//naq_utils:custom_logging",
-        ":utils",
-        ":exceptions",
+        requirement("python-youtube"),
+        "//naq_3p_apis:youtube_api",
+        "//naq_utils:extensions",
+        "//naq_utils:logging",
+        "//naq_utils:serialize",
+        "//naq_video_downloader:settings",
     ],
+    visibility = ["//naq_video_downloader/test:__pkg__"]
 )
 
 py_library(
-    name = "library_item",
-    srcs = ["library_item.py"],
+    name = "youtube_music_video",
+    srcs = ["youtube_music_video.py"],
     deps = [
-        ":utils",
+        requirement("python-youtube"),
+        "//naq_3p_apis:http",
+        "//naq_3p_apis:imvdb",
+        "//naq_3p_apis:theaudiodb",
+        "//naq_utils:logging",
+        "//naq_utils:extensions",
+        "//naq_video_downloader:settings",
+        "//naq_video_downloader:youtube_video",
     ],
-)
-
-py_library(
-    name = "theaudiodb",
-    srcs = ["theaudiodb.py"],
-    deps = [
-        requirement("urllib3"),
-        ":utils",
-        ":manual_info",
-        ":exceptions",
-    ],
-)
-
-py_library(
-    name = "imvdb",
-    srcs = ["imvdb.py"],
-    deps = [
-        requirement("urllib3"),
-        "//naq_utils:custom_logging",
-        ":utils",
-    ],
-)
-
-py_library(
-    name = "media_server",
-    srcs = ["media_server.py"],
-)
-
-py_library(
-    name = "artist",
-    srcs = ["artist.py"],
-    deps = [
-        "//naq_utils:custom_logging",
-        ":theaudiodb",
-        ":utils",
-        ":library_item",
-    ],
-)
-
-py_library(
-    name = "video",
-    srcs = ["video.py"],
-    deps = [
-        "//naq_utils:custom_logging",
-        ":artist",
-        ":theaudiodb",
-        ":exceptions",
-        ":utils",
-        ":library_item",
-    ],
-)
-
-py_library(
-    name = "youtube_api",
-    srcs = ["youtube_api.py"],
-    deps = [
-        requirement("google-api-python-client"),
-        "//naq_utils:custom_logging",
-        ":video",
-        ":utils",
-        ":exceptions",
-    ],
-    data = [
-        ":yt-dlp",
-    ]
+    visibility = ["//naq_video_downloader/test:__pkg__"]
 )
 
 py_binary(
     name = "naq_video_downloader",
-    srcs =["__main__.py"],
+    srcs = ["__main__.py"],
     main = "__main__.py",
     deps = [
         requirement("emoji"),
+        requirement("python-youtube"),
+        "//naq_3p_apis:youtube_api",
+        "//naq_utils:extensions",
+        "//naq_utils:logging",
         "//naq_utils:naq_tool",
-        "//naq_utils:custom_logging",
-        "//naq_utils:console",
-        ":youtube_api",
-        ":video",
+        "//naq_video_downloader:youtube_music_video",
+        "//naq_video_downloader:settings",
     ],
     visibility = [
-        "//release:__pkg__",
         "//naq_toolbox:__pkg__",
+        "//release:__pkg__",
     ],
 )
 
 filegroup(
-    name = "downloader_binaries",
+    name = "package_data",
     srcs = [":yt-dlp"],
 )
 
 py_wheel(
     name = "naq_video_downloader.wheel",
     distribution = "naq_video_downloader",
-    version = "1.0",
-    deps = [
-        ":naq_video_downloader",
-        ":artist",
-        ":exceptions",
-        ":imvdb",
-        ":library_item",
-        ":manual_info",
-        ":media_server",
-        ":theaudiodb",
-        ":utils",
-        ":video",
-        ":youtube_api",
-        ":downloader_binaries",
-    ],
-    requires_file = ":requirements.txt",
     entry_points = {
         "console_scripts": [
             "naq_video_downloader = naq_video_downloader.__main__:main",
         ],
     },
+    requires_file = ":requirements.txt",
+    version = "1.0",
     visibility = ["//release:__pkg__"],
+    deps = [
+        ":music_video",
+        ":naq_video_downloader",
+        ":package_data",
+        ":settings",
+        ":youtube_api",
+        ":yt_dlp",
+    ],
 )

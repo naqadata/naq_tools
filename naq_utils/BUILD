@@ -11,8 +11,21 @@ py_library(
 )
 
 py_library(
-    name = "custom_logging",
-    srcs = ["custom_logging.py"],
+    name = "constants",
+    srcs = ["constants.py"],
+    deps = [":extensions"],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
+    name = "extensions",
+    srcs = ["extensions.py"],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
+    name = "logging",
+    srcs = ["logging.py"],
     deps = [
         requirement("colorama"),
     ],
@@ -31,9 +44,35 @@ py_wheel(
     version = "1.0",
     deps = [
         ":console",
-        ":custom_logging",
+        ":logging",
         ":naq_tool",
     ],
     requires_file = ":requirements.txt",
     visibility = ["//release:__pkg__"],
+)
+
+py_library(
+    name = "serialize",
+    srcs = ["serialize.py"],
+    deps = [":constants"],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
+    name = "settings",
+    srcs = ["settings.py"],
+    deps = [
+        requirement("shared-memory-dict"),
+        ":constants",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
+    name = "caching",
+    srcs = ["caching.py"],
+    deps = [
+        ":constants",
+    ],
+    visibility = ["//visibility:public"],
 )

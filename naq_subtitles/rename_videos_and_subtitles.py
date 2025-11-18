@@ -16,15 +16,15 @@ The module is intended to be used as a command-line tool but the classes
 are small and testable individually.
 """
 
-from pathlib import Path
 import re
 import shutil
 import argparse
 from typing import TypeAlias, Iterator
 from dataclasses import dataclass
 
+from naq_utils.extensions import Path
 from naq_utils.naq_tool import NaqTool
-from naq_utils.custom_logging import logger
+from naq_utils.logging import logger
 
 
 regexes = [

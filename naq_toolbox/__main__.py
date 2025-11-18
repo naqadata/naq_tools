@@ -1,7 +1,7 @@
 import argparse
 import signal
 from naq_video_downloader.__main__ import DownloaderTool
-from naq_utils.custom_logging import logger
+from naq_utils.logging import logger
 from naq_subtitles.__main__ import SubtitlesTool
 import logging
 

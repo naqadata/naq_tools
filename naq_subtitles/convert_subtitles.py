@@ -2,7 +2,7 @@
 
 import argparse
 import logging
-from pathlib import Path
+from naq_utils.extensions import Path
 from naq_utils.naq_tool import NaqTool
 import webvtt
 

@@ -11,10 +11,28 @@ pytest_test(
 )
 
 pytest_test(
+    name = "test_extensions",
+    test = "test_extensions.py",
+    deps = [
+        requirement("shared-memory-dict"),
+        "//naq_utils:extensions",
+    ],
+)
+
+pytest_test(
     name = "test_logging",
     test = "test_logging.py",
     deps = [
         requirement("colorama"),
-        "//naq_utils:custom_logging",
+        "//naq_utils:logging",
+    ],
+)
+
+pytest_test(
+    name = "test_settings",
+    test = "test_settings.py",
+    deps = [
+        requirement("shared-memory-dict"),
+        "//naq_utils:settings",
     ],
 )

@@ -16,7 +16,7 @@ py_binary(
         requirement("colorama"),
         requirement("packaging"),
         requirement("webvtt-py"),
-        "//naq_utils:custom_logging",
+        "//naq_utils:logging",
         "//naq_utils:naq_tool",
     ],
     visibility = [
@@ -30,7 +30,7 @@ py_library(
     srcs = ["rename_videos_and_subtitles.py"],
     deps = [
         "//naq_utils:naq_tool",
-        "//naq_utils:custom_logging",
+        "//naq_utils:logging",
     ],
     visibility = [
         "//naq_toolbox:__pkg__",
@@ -58,7 +58,7 @@ py_binary(
         ":rename_videos_and_subtitles",
         ":convert_subtitles",
         "//naq_utils:naq_tool",
-        "//naq_utils:custom_logging",
+        "//naq_utils:logging",
         "//naq_utils:console",
     ],
     visibility = [

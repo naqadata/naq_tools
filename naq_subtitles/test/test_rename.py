@@ -1,5 +1,5 @@
 import pytest
-from pathlib import Path
+from naq_utils.extensions import Path
 import tempfile
 from naq_subtitles.rename_videos_and_subtitles import File, EpisodeFiles, FileMap
 from dataclasses import dataclass

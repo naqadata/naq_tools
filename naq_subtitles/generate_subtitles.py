@@ -11,7 +11,6 @@ import torch.cuda
 import whisper
 import stable_whisper
 import argparse
-from pathlib import Path
 from types import ModuleType
 import subprocess
 import webvtt
@@ -22,8 +21,9 @@ from enum import Enum
 
 from networkx.algorithms.connectivity.edge_augmentation import complement_edges
 
+from naq_utils.extensions import Path
 from naq_utils.naq_tool import NaqTool
-from naq_utils.custom_logging import logger
+from naq_utils.logging import logger
 
 class AudioExtractionMethod(Enum):
     MoviePy = "moviepy"

@@ -1,0 +1,5 @@
+test \
+    --test_env=AUDIODB_API_KEY=${AUDIODB_API_KEY} \
+    --test_env=GOOGLE_API_KEY=${GOOGLE_API_KEY} \
+    --test_env=IMVDB_API_KEY=${IMVDB_API_KEY} \
+    --test_output=all
