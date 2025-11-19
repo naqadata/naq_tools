@@ -1,4 +1,3 @@
 python-youtube
-urllib3
 shared_memory_dict
 emoji

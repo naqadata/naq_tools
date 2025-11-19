@@ -65,11 +65,6 @@ py_binary(
     ],
 )
 
-filegroup(
-    name = "package_data",
-    srcs = [":yt-dlp"],
-)
-
 py_wheel(
     name = "naq_video_downloader.wheel",
     distribution = "naq_video_downloader",
@@ -82,11 +77,9 @@ py_wheel(
     version = "1.0",
     visibility = ["//release:__pkg__"],
     deps = [
-        ":music_video",
         ":naq_video_downloader",
-        ":package_data",
         ":settings",
-        ":youtube_api",
-        ":yt_dlp",
+        ":youtube_music_video",
+        ":youtube_video",
     ],
 )

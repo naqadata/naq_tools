@@ -40,6 +40,11 @@ py_library(
     ],
 )
 
+filegroup(
+    name = "package_data",
+    srcs = [":yt-dlp"],
+)
+
 py_library(
     name = "theaudiodb",
     srcs = ["theaudiodb.py"],
@@ -74,4 +79,22 @@ py_library(
     deps = [
         "//naq_utils:logging",
     ],
+)
+
+py_wheel(
+    name = "naq_3p_apis.wheel",
+    distribution = "naq_3p_apis",
+    version = "1.0",
+    deps = [
+        ":api",
+        ":exceptions",
+        ":http",
+        ":imvdb",
+        ":package_data",
+        ":theaudiodb",
+        ":youtube_api",
+        ":yt_dlp",
+    ],
+    requires_file = ":requirements.txt",
+    visibility = ["//release:__pkg__"],
 )

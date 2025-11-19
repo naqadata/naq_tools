@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from datetime import timedelta
 import re
-import sys
 from typing import Generator, Iterator
 from xml.etree import ElementTree as ET
 import json

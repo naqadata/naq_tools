@@ -11,22 +11,22 @@ py_binary(
     name = "naq_toolbox",
     srcs = [":naq_toolbox_src"],
     main = "__main__.py",
-    deps = [
-        "//naq_video_downloader:naq_video_downloader",
-        "//naq_subtitles:naq_subtitles",
-    ],
     visibility = ["//release:__pkg__"],
+    deps = [
+        "//naq_subtitles",
+        "//naq_video_downloader",
+    ],
 )
 
 py_wheel(
     name = "naq_toolbox.wheel",
     distribution = "naq_toolbox",
-    version = "1.0",
-    deps = [":naq_toolbox_src"],
     entry_points = {
         "console_scripts": [
             "naq_toolbox = naq_toolbox.__main__:main",
         ],
     },
+    version = "1.0",
     visibility = ["//release:__pkg__"],
+    deps = [":naq_toolbox"],
 )

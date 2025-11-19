@@ -1,19 +1,13 @@
 import argparse
 import os
-import re
 import shutil
-import subprocess
-import sys
 
-import emoji
-from pyyoutube import Video
-
-from naq_utils.extensions import Path
-from naq_utils.logging import logger
-from naq_utils.naq_tool import NaqTool
 from naq_video_downloader.settings import GlobalSettings
 from naq_video_downloader.youtube_video import YouTubeVideo
 from naq_video_downloader.youtube_music_video import MusicVideo
+from naq_utils.extensions import Path
+from naq_utils.logging import logger
+from naq_utils.naq_tool import NaqTool
 
 
 DEFAULT_DOWNLOAD_MIN_VIEW_COUNT = 50 * 1000 * 1000

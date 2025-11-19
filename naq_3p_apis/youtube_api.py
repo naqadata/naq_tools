@@ -1,13 +1,9 @@
-from typing import Generator, Iterator
-from dataclasses import dataclass
+from typing import Generator
 
-import emoji
 import pyyoutube
 
 from naq_utils.caching import RequestCache
-from naq_utils.extensions import Path
 from naq_utils.logging import logger
-from naq_utils.settings import JsonFile
 
 
 DEFAULT_MAX_SEARCH_RESULTS = 50

@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import Generator
-from naq_utils.constants import HOME_SAVE_DIR
-from naq_utils.extensions import Path
 import pickle
+
+from naq_utils.extensions import Path
 
 
 class Serialize:
