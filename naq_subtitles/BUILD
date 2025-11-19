@@ -66,6 +66,7 @@ py_library(
     deps = [
         "//naq_utils:logging",
         "//naq_utils:naq_tool",
+        "//naq_utils:extensions",
     ],
 )
 

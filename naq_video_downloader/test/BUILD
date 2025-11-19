@@ -8,6 +8,7 @@ pytest_test(
         requirement("python-youtube"),
         "//naq_video_downloader:youtube_video",
     ],
+    tags = ["exclusive"],
 )
 
 pytest_test(
@@ -17,4 +18,5 @@ pytest_test(
         requirement("python-youtube"),
         "//naq_video_downloader:youtube_music_video",
     ],
+    tags = ["exclusive"],
 )

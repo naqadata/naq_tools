@@ -42,6 +42,10 @@ class GlobalSetting[T]:
     def value(self, v: T):
         self._smd[self.name] = v
 
+    def delete(self) -> None:
+        if self.name in self._smd:
+            del self._smd[self.name]
+
 
 GSStr: TypeAlias = GlobalSetting[str]
 GSStrOrNone: TypeAlias = GlobalSetting[str | None]

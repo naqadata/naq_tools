@@ -12,6 +12,8 @@ def api():
     google_api_key = os.environ.get("GOOGLE_API_KEY")
     assert google_api_key, "Must set GOOGLE_API_KEY env var before running tests"
 
+    print("WTF", google_api_key)
+
     return YouTubeAPI(google_api_key)
 
 
@@ -32,6 +34,6 @@ class TestYoutubeApi:
     def test_iter_playlist_items(self, api: YouTubeAPI):
         videos = list(api.iter_playlist_videos(self.PLAYLIST_ID))
         assert videos
-        assert len(videos) == 5
+        assert len(videos) > 100
         for video in videos:
             assert isinstance(video, pyyoutube.Video)

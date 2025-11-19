@@ -17,6 +17,3 @@ class TestPath:
             assert not lowered_path.exists()
             assert lowered_path.existsi()
     
-    def test_return_as_parent(self):
-        def _
-

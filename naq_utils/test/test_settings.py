@@ -11,7 +11,11 @@ class SettingsUnderTest:
 
 @pytest.fixture
 def test_settings():
-    return SettingsUnderTest()
+    settings = SettingsUnderTest()
+    yield settings
+    settings.setting_a.delete()
+    settings.setting_b.delete()
+
 
 
 class TestSettings:

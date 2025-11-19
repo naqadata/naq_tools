@@ -59,7 +59,7 @@ class YT_DLP:
             "--quiet",
             "--progress", "--no-warnings",
             "--concurrent-fragments", "5",
-            "--cookies-from-browser", "firefox",
+            # "--cookies-from-browser", "firefox",  # depends on browser cookes being available. TODO: add option for this?
             video_page_url
         ]
 
