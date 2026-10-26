@@ -36,6 +36,48 @@ def test_download_does_not_include_passthrough_args_by_default(monkeypatch, tmp_
     assert "--cookies-from-browser" not in commands[0]
 
 
+def test_download_audio_chapters_requests_mp3_for_each_chapter(monkeypatch, tmp_path):
+    commands = []
+
+    def fake_run(cmd, **kwargs):
+        commands.append(cmd)
+        return SimpleNamespace(returncode=0)
+
+    monkeypatch.setattr("naq_3p_apis.yt_dlp.subprocess.run", fake_run)
+
+    YT_DLP.download_audio_chapters("https://example.com/album", tmp_path)
+
+    command = commands[0]
+    assert "--split-chapters" in command
+    assert command[command.index("--audio-format") + 1] == "mp3"
+    assert "bestvideo+bestaudio/best" not in command
+    output_templates = [
+        command[index + 1]
+        for index, value in enumerate(command)
+        if value == "--output"
+    ]
+    assert output_templates == [
+        ".naq-source-%(id)s.%(ext)s",
+        "chapter:%(section_number)02d - %(section_title)s.%(ext)s",
+    ]
+
+
+def test_download_chapters_discards_full_album_source(monkeypatch, tmp_path):
+    def fake_run(cmd, **kwargs):
+        temp_dir = kwargs["cwd"]
+        (temp_dir / ".naq-source-video-id.mp3").write_bytes(b"full album")
+        (temp_dir / "01 - Chapter One.mp3").write_bytes(b"chapter")
+        return SimpleNamespace(returncode=0)
+
+    monkeypatch.setattr("naq_3p_apis.yt_dlp.subprocess.run", fake_run)
+
+    downloaded = YT_DLP.download_audio_chapters("https://example.com/album", tmp_path)
+
+    assert [path.name for path in downloaded] == ["01 - Chapter One.mp3"]
+    assert (tmp_path / "01 - Chapter One.mp3").read_bytes() == b"chapter"
+    assert not (tmp_path / ".naq-source-video-id.mp3").exists()
+
+
 def test_move_downloaded_file_copies_contents_after_cross_device_error(monkeypatch, tmp_path):
     source = tmp_path / "source.mp4"
     destination = tmp_path / "destination.mp4"

@@ -71,8 +71,17 @@ naq-toolbox --help
 Run the downloader subcommand:
 
 ```bash
-naq-toolbox --log-level INFO downloader --help
+naq-toolbox downloader video VIDEO_URL
 ```
+
+Extract a chaptered album video into individual MP3 tracks without API keys:
+
+```bash
+naq-toolbox downloader audio-album --download-dir ~/Music ALBUM_URL
+```
+
+Use `album` rather than `audio-album` to split the source into MP4 files with
+both video and audio.
 
 If you build and install the wheels (or install from PyPI if published), the package exposes console scripts:
 
