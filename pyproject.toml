@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "naq-toolbox"
+version = "1.0.0"
+description = "Naqadata video downloading and subtitle tools"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "colorama>=0.4.6",
+    "emoji>=2.0",
+    "python-youtube>=0.9",
+    "shared-memory-dict>=0.7",
+    "urllib3>=2.0",
+    "webvtt-py>=0.5",
+    "yt-dlp>=2025.1.15",
+]
+
+[project.optional-dependencies]
+subtitles = [
+    "moviepy>=2.0",
+    "stable-ts>=2.0",
+    "whisperx>=3.0",
+]
+dev = ["pytest>=8"]
+
+[project.scripts]
+naq-toolbox = "naq_toolbox.__main__:main"
+naq-video-downloader = "naq_video_downloader.__main__:main"
+naq-subtitles = "naq_subtitles.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["naq_*"]
+exclude = ["naq_*.test*", "tests*"]
+
+[tool.pytest.ini_options]
+testpaths = ["naq_utils/test", "naq_3p_apis/test", "naq_subtitles/test", "naq_video_downloader/test"]
+addopts = "-ra -m 'not integration'"
+markers = [
+    "integration: test that requires external services, credentials, or a live download",
+]

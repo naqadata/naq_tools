@@ -37,11 +37,11 @@ class DownloaderTool(NaqTool):
         self.parser.add_argument("--permissive", default=False, action="store_true", 
                                  help="Do not apply strict name policies to music videos from YouTube")
         self.parser.add_argument("--audiodb-api-key", default=os.environ.get("AUDIODB_API_KEY"), 
-                                 help="API Key for use with theaudiodb API. Overrides AUDIODB_API_KEY env var, if specified. Default: %(default)s")
+                                 help="API key for TheAudioDB. Overrides AUDIODB_API_KEY when supplied.")
         self.parser.add_argument("--imvdb-api-key", default=os.environ.get("IMVDB_API_KEY"), 
-                                 help="API Key for use with IMVDB API. Overrides IMVDB_API_KEY env var, if specified. Default: %(default)s")
+                                 help="API key for IMVDB. Overrides IMVDB_API_KEY when supplied.")
         self.parser.add_argument("--google-api-key", default=os.environ.get("GOOGLE_API_KEY"), 
-                                 help="API Key for use with Google API. Overrides GOOGLE_API_KEY env var, if specified. Default: %(default)s")
+                                 help="API key for Google. Overrides GOOGLE_API_KEY when supplied.")
 
         subparsers = self.parser.add_subparsers(dest='command')
 

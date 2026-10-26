@@ -2,6 +2,6 @@
 venv
 .venv
 dist
+build
 __pycache__
 *.egg-info
-bazel-*

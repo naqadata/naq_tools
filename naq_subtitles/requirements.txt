@@ -1,8 +1,0 @@
-whisperx
-stable-ts
-moviepy
-rpyc
-numpy
-torch
-webvtt-py
-colorama

@@ -8,6 +8,9 @@ import os
 import urllib.parse
 
 
+pytestmark = pytest.mark.integration
+
+
 PLAYLIST_ID = "PLYbocufkwRFA1cz_N8epnI10--gPwzzKu"  # Pop-up Videos
 VIDEO_ID = "L8C_JvJfxfU"  # https://www.youtube.com/watch?v=L8C_JvJfxfU - Steve Jobs Memorial Concert with Coldplay
 

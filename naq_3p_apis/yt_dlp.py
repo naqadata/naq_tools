@@ -2,6 +2,7 @@ import errno
 import tempfile
 import subprocess
 import shutil
+import sys
 import os
 
 from naq_utils.extensions import Path
@@ -9,19 +10,18 @@ from naq_utils.logging import logger
 
 
 class YT_DLP:
-    EXEC_PATH = Path(__file__).parent.absolute() / "yt-dlp"
-
-    check_for_update: bool = True
     # Set by the downloader CLI for tokens supplied after its ``--`` separator.
     extra_args: tuple[str, ...] = ()
 
     @classmethod
-    def _ensure_updated(cls):
-        if cls.check_for_update:
-            assert cls.EXEC_PATH.exists(), "yt-dlp executable is missing!"            
-            if subprocess.run([str(cls.EXEC_PATH), "--update"], capture_output=True).returncode != 0:
-                logger.error("Failed to update yt-dlp executable. Look for any errors in log above.")
-            cls.check_for_update = False
+    def _command(cls) -> list[str]:
+        """Run the yt-dlp installed in the same virtual environment.
+
+        A package installation must not modify its own files at runtime.  Using
+        ``python -m yt_dlp`` also avoids accidentally selecting a system-wide
+        executable over the dependency installed for naq-toolbox.
+        """
+        return [sys.executable, "-m", "yt_dlp"]
 
     @staticmethod
     def _move_downloaded_file(source: Path, destination: Path) -> None:
@@ -60,12 +60,10 @@ class YT_DLP:
         if "t=" in video_page_url:
             logger.warning(f"WTF, a timestamp is in this URL: {video_page_url}")
 
-        cls._ensure_updated()
-
         logger.status(f"Downloading video from '{video_page_url}'")
 
         cmd = [
-            cls.EXEC_PATH,
+            *cls._command(),
             "-f", "bestvideo+bestaudio/best",
             "--recode", "mp4",
             "--merge-output-format", "mp4",

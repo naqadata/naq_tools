@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 import pytest
 import os
 
@@ -7,12 +6,13 @@ import pyyoutube
 from naq_3p_apis.youtube_api import YouTubeAPI
 
 
+pytestmark = pytest.mark.integration
+
+
 @pytest.fixture()
 def api():
     google_api_key = os.environ.get("GOOGLE_API_KEY")
     assert google_api_key, "Must set GOOGLE_API_KEY env var before running tests"
-
-    print("WTF", google_api_key)
 
     return YouTubeAPI(google_api_key)
 

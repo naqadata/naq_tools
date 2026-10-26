@@ -8,6 +8,9 @@ import os
 import urllib.parse
 
 
+pytestmark = pytest.mark.integration
+
+
 PLAYLIST_ID = "PLmyAPRLQRJ6lMbAdXYGuyZ627Y9RoX25i"
 LIVE_VIDEO_ID = "Fpn1imb9qZg"  # https://www.youtube.com/watch?v=Fpn1imb9qZg - Coldplay - A Sky Full Of Stars (Live at River Plate)
 OFFICIAL_VIDEO_ID = "VPRjCeoBqrI"  # https://www.youtube.com/watch?v=VPRjCeoBqrI - Coldplay - A Sky Full Of Stars (Official Video)

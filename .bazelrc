@@ -1,1 +1,0 @@
-test --action_env=AUDIODB_API_KEY --action_env=GOOGLE_API_KEY --action_env=IMVDB_API_KEY --test_tag_filters=pytest

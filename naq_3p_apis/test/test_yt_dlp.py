@@ -11,7 +11,6 @@ def test_download_forwards_cli_passthrough_args(monkeypatch, tmp_path):
         commands.append(cmd)
         return SimpleNamespace(returncode=0)
 
-    monkeypatch.setattr(YT_DLP, "check_for_update", False)
     monkeypatch.setattr(YT_DLP, "extra_args", ("--cookies-from-browser", "firefox"))
     monkeypatch.setattr("naq_3p_apis.yt_dlp.subprocess.run", fake_run)
 
@@ -28,7 +27,6 @@ def test_download_does_not_include_passthrough_args_by_default(monkeypatch, tmp_
         commands.append(cmd)
         return SimpleNamespace(returncode=0)
 
-    monkeypatch.setattr(YT_DLP, "check_for_update", False)
     monkeypatch.setattr(YT_DLP, "extra_args", ())
     monkeypatch.setattr("naq_3p_apis.yt_dlp.subprocess.run", fake_run)
 
