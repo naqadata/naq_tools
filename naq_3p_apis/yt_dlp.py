@@ -4,6 +4,7 @@ import subprocess
 import shutil
 import sys
 import os
+import re
 
 from naq_utils.extensions import Path
 from naq_utils.logging import logger
@@ -151,11 +152,48 @@ class YT_DLP:
         )
 
     @classmethod
-    def download_audio_chapters(cls, video_page_url: str, download_dir: Path) -> list[Path]:
-        """Download a chaptered video as one MP3 file per chapter."""
-        return cls.download(
+    @staticmethod
+    def _write_audio_metadata(path: Path, artist: str, album: str) -> None:
+        """Write the ID3 fields Windows Media Player uses to organize an MP3."""
+        from mutagen.easyid3 import EasyID3
+        from mutagen.id3 import ID3NoHeaderError
+        from mutagen.mp3 import MP3
+
+        match = re.match(r"(?P<number>\d+) - (?P<title>.+)$", path.stem)
+        if not match:
+            raise ValueError(f"Chapter filename has no track prefix: {path.name}")
+
+        try:
+            tags = EasyID3(path)
+        except ID3NoHeaderError:
+            audio = MP3(path)
+            audio.add_tags()
+            audio.save()
+            tags = EasyID3(path)
+
+        tags["title"] = match.group("title")
+        tags["artist"] = artist
+        tags["album"] = album
+        tags["tracknumber"] = match.group("number")
+        tags.save()
+
+    @classmethod
+    def download_audio_chapters(
+        cls,
+        video_page_url: str,
+        download_dir: Path,
+        *,
+        artist: str,
+        album: str,
+    ) -> list[Path]:
+        """Download a chaptered video as tagged MP3 files, one per chapter."""
+        downloaded_files = cls.download(
             video_page_url,
             download_dir=download_dir,
             split_chapters=True,
             audio_only=True,
         )
+        for file_path in downloaded_files:
+            if file_path.suffix.lower() == ".mp3":
+                cls._write_audio_metadata(file_path, artist, album)
+        return downloaded_files

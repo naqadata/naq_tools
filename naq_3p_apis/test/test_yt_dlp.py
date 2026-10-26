@@ -1,6 +1,9 @@
 import errno
 from types import SimpleNamespace
 
+from mutagen.easyid3 import EasyID3
+from mutagen.id3 import ID3
+
 from naq_3p_apis.yt_dlp import YT_DLP
 
 
@@ -45,7 +48,12 @@ def test_download_audio_chapters_requests_mp3_for_each_chapter(monkeypatch, tmp_
 
     monkeypatch.setattr("naq_3p_apis.yt_dlp.subprocess.run", fake_run)
 
-    YT_DLP.download_audio_chapters("https://example.com/album", tmp_path)
+    YT_DLP.download_audio_chapters(
+        "https://example.com/album",
+        tmp_path,
+        artist="Artist",
+        album="Album",
+    )
 
     command = commands[0]
     assert "--split-chapters" in command
@@ -70,12 +78,37 @@ def test_download_chapters_discards_full_album_source(monkeypatch, tmp_path):
         return SimpleNamespace(returncode=0)
 
     monkeypatch.setattr("naq_3p_apis.yt_dlp.subprocess.run", fake_run)
+    tagged_files = []
+    monkeypatch.setattr(
+        YT_DLP,
+        "_write_audio_metadata",
+        lambda path, artist, album: tagged_files.append((path.name, artist, album)),
+    )
 
-    downloaded = YT_DLP.download_audio_chapters("https://example.com/album", tmp_path)
+    downloaded = YT_DLP.download_audio_chapters(
+        "https://example.com/album",
+        tmp_path,
+        artist="Artist",
+        album="Album",
+    )
 
     assert [path.name for path in downloaded] == ["01 - Chapter One.mp3"]
     assert (tmp_path / "01 - Chapter One.mp3").read_bytes() == b"chapter"
     assert not (tmp_path / ".naq-source-video-id.mp3").exists()
+    assert tagged_files == [("01 - Chapter One.mp3", "Artist", "Album")]
+
+
+def test_write_audio_metadata_sets_windows_media_player_fields(tmp_path):
+    chapter = tmp_path / "01 - Chapter One.mp3"
+    ID3().save(chapter)
+
+    YT_DLP._write_audio_metadata(chapter, artist="Artist", album="Album")
+
+    tags = EasyID3(chapter)
+    assert tags["title"] == ["Chapter One"]
+    assert tags["artist"] == ["Artist"]
+    assert tags["album"] == ["Album"]
+    assert tags["tracknumber"] == ["01"]
 
 
 def test_move_downloaded_file_copies_contents_after_cross_device_error(monkeypatch, tmp_path):

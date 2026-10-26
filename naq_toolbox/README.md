@@ -21,7 +21,8 @@ For a YouTube video that contains an album with chapters, use the
 lookups.
 
 ```sh
-naq-toolbox downloader audio-album --download-dir ~/Music ALBUM_URL
+naq-toolbox downloader audio-album --download-dir ~/Music \
+  --artist Sevdaliza --album ISON ALBUM_URL
 ```
 
 Use `album` instead when you want separate MP4 files containing both video and

@@ -27,10 +27,15 @@ def test_parser_selects_audio_album_mode():
     parser = argparse.ArgumentParser()
     DownloaderTool(parser)
 
-    args = _parse_args(parser, ["audio-album", "album-url"])
+    args = _parse_args(
+        parser,
+        ["audio-album", "--artist", "Artist", "--album", "Album", "album-url"],
+    )
 
     assert args.targets == ["album-url"]
     assert args.command == "audio-album"
+    assert args.artist == "Artist"
+    assert args.album == "Album"
 
 
 def test_parser_selects_video_album_mode():
@@ -47,9 +52,22 @@ def test_audio_album_mode_does_not_require_api_keys(monkeypatch, tmp_path):
     parser = argparse.ArgumentParser()
     tool = DownloaderTool(parser)
     downloaded = []
-    monkeypatch.setattr(YT_DLP, "download_audio_chapters", lambda target, directory: downloaded.append((target, directory)))
+    monkeypatch.setattr(
+        YT_DLP,
+        "download_audio_chapters",
+        lambda target, directory, **metadata: downloaded.append((target, directory, metadata)),
+    )
 
-    args = _parse_args(parser, ["audio-album", "--download-dir", str(tmp_path), "album-url"])
+    args = _parse_args(
+        parser,
+        [
+            "audio-album",
+            "--download-dir", str(tmp_path),
+            "--artist", "Artist",
+            "--album", "Album",
+            "album-url",
+        ],
+    )
     tool.main(args)
 
-    assert downloaded == [("album-url", tmp_path)]
+    assert downloaded == [("album-url", tmp_path, {"artist": "Artist", "album": "Album"})]

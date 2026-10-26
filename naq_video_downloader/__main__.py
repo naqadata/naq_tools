@@ -103,6 +103,8 @@ class DownloaderTool(NaqTool):
         )
         add_download_dir(audio_album_parser)
         audio_album_parser.add_argument("targets", nargs="+", help="YouTube URLs or IDs for chaptered album videos.")
+        audio_album_parser.add_argument("--artist", required=True, help="Contributing artist to embed in each MP3.")
+        audio_album_parser.add_argument("--album", required=True, help="Album title to embed in each MP3.")
 
         more_parser = subparsers.add_parser(
             "more",
@@ -179,7 +181,12 @@ class DownloaderTool(NaqTool):
             for target in args.targets:
                 if args.command == "audio-album":
                     logger.status("Downloading chaptered audio album", value=target)
-                    YT_DLP.download_audio_chapters(target, args.download_dir)
+                    YT_DLP.download_audio_chapters(
+                        target,
+                        args.download_dir,
+                        artist=args.artist,
+                        album=args.album,
+                    )
                 else:
                     logger.status("Downloading chaptered album", value=target)
                     YT_DLP.download_chapters(target, args.download_dir)

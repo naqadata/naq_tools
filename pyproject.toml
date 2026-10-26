@@ -11,6 +11,7 @@ requires-python = ">=3.10"
 dependencies = [
     "colorama>=0.4.6",
     "emoji>=2.0",
+    "mutagen>=1.47",
     "python-youtube>=0.9",
     "shared-memory-dict>=0.7",
     "urllib3>=2.0",
