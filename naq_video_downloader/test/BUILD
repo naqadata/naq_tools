@@ -20,3 +20,9 @@ pytest_test(
     ],
     tags = ["exclusive"],
 )
+
+pytest_test(
+    name = "test_cli",
+    test = "test_cli.py",
+    deps = ["//naq_video_downloader"],
+)

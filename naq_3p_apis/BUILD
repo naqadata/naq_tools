@@ -76,7 +76,9 @@ py_library(
     name = "yt_dlp",
     srcs = ["yt_dlp.py"],
     data = [":yt-dlp"],
+    visibility = ["//naq_3p_apis/test:__pkg__"],
     deps = [
+        "//naq_utils:extensions",
         "//naq_utils:logging",
     ],
 )

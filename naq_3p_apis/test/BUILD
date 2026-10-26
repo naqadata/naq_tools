@@ -9,3 +9,9 @@ pytest_test(
         "//naq_3p_apis:youtube_api",
     ],
 )
+
+pytest_test(
+    name = "test_yt_dlp",
+    test = "test_yt_dlp.py",
+    deps = ["//naq_3p_apis:yt_dlp"],
+)

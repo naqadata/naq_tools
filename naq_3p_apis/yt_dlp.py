@@ -1,6 +1,8 @@
+import errno
 import tempfile
 import subprocess
 import shutil
+import os
 
 from naq_utils.extensions import Path
 from naq_utils.logging import logger
@@ -8,8 +10,10 @@ from naq_utils.logging import logger
 
 class YT_DLP:
     EXEC_PATH = Path(__file__).parent.absolute() / "yt-dlp"
-    
+
     check_for_update: bool = True
+    # Set by the downloader CLI for tokens supplied after its ``--`` separator.
+    extra_args: tuple[str, ...] = ()
 
     @classmethod
     def _ensure_updated(cls):
@@ -18,6 +22,19 @@ class YT_DLP:
             if subprocess.run([str(cls.EXEC_PATH), "--update"], capture_output=True).returncode != 0:
                 logger.error("Failed to update yt-dlp executable. Look for any errors in log above.")
             cls.check_for_update = False
+
+    @staticmethod
+    def _move_downloaded_file(source: Path, destination: Path) -> None:
+        """Move a download without copying unsupported metadata across filesystems."""
+        try:
+            os.replace(source, destination)
+        except OSError as error:
+            if error.errno != errno.EXDEV:
+                raise
+            # ``copy2`` (used by shutil.move) copies timestamps and permissions.
+            # Windows-mounted WSL drives can reject that metadata operation.
+            shutil.copyfile(source, destination)
+            source.unlink()
      
     @classmethod
     def download(cls, video_page_url: str, download_path: Path | None = None, file_title: str | None = None, gen_subs: bool = False) -> list[Path]:
@@ -59,9 +76,11 @@ class YT_DLP:
             "--quiet",
             "--progress", "--no-warnings",
             "--concurrent-fragments", "5",
-            # "--cookies-from-browser", "firefox",  # depends on browser cookes being available. TODO: add option for this?
+            *cls.extra_args,
             video_page_url
         ]
+
+        logger.info(f"YT-DLP CMD: {cmd}")
 
         with tempfile.TemporaryDirectory() as tmp_dir_str:
             tmp_dir = Path(tmp_dir_str)
@@ -87,7 +106,7 @@ class YT_DLP:
                     new_path = download_dir / downloaded_file.name
                     if new_path.exists():
                         new_path.unlink()
-                    shutil.move(downloaded_file, new_path)
+                    cls._move_downloaded_file(downloaded_file, new_path)
                     downloaded_file_paths.append(new_path)
 
             return downloaded_file_paths

@@ -1,7 +1,9 @@
 import argparse
 import os
 import shutil
+import sys
 
+from naq_3p_apis.yt_dlp import YT_DLP
 from naq_video_downloader.settings import GlobalSettings
 from naq_video_downloader.youtube_video import YouTubeVideo
 from naq_video_downloader.youtube_music_video import MusicVideo
@@ -11,6 +13,21 @@ from naq_utils.naq_tool import NaqTool
 
 
 DEFAULT_DOWNLOAD_MIN_VIEW_COUNT = 50 * 1000 * 1000
+
+
+def _parse_args(parser: argparse.ArgumentParser, argv: list[str] | None = None) -> argparse.Namespace:
+    """Parse downloader arguments, retaining tokens after ``--`` for yt-dlp."""
+    argv = list(sys.argv[1:] if argv is None else argv)
+    try:
+        separator_index = argv.index("--")
+    except ValueError:
+        downloader_args, yt_dlp_args = argv, []
+    else:
+        downloader_args, yt_dlp_args = argv[:separator_index], argv[separator_index + 1:]
+
+    args = parser.parse_args(downloader_args)
+    args.yt_dlp_args = yt_dlp_args
+    return args
 
 
 class DownloaderTool(NaqTool):
@@ -85,6 +102,7 @@ class DownloaderTool(NaqTool):
             shutil.rmtree(duplicate)
 
     def main(self, args: argparse.Namespace):
+        YT_DLP.extra_args = tuple(getattr(args, "yt_dlp_args", ()))
         GlobalSettings().interactive.value = args.interactive
         GlobalSettings().permissive.value = args.permissive
         GlobalSettings().audiodb_api_key.value = args.audiodb_api_key
@@ -153,13 +171,13 @@ class DownloaderTool(NaqTool):
             print("")
 
 
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(description="Web Video Downloader Tool")
     tool = DownloaderTool(parser)
 
     parser.add_argument("--log-level", choices=["debug", "info", "status", "warning", "error"], default="info", help="Set logging level. Default: %(default)s")
     
-    args = parser.parse_args()
+    args = _parse_args(parser, argv)
 
     import logging
     logger.setLevel(level=getattr(logging, args.log_level.upper()))

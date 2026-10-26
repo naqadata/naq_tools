@@ -62,6 +62,7 @@ py_binary(
     visibility = [
         "//naq_toolbox:__pkg__",
         "//release:__pkg__",
+        "//naq_video_downloader/test:__pkg__",
     ],
 )
 
